@@ -134,7 +134,7 @@ function exitGame()
 function enterHelp()
 {
 	console.log("Entering help state.");
-	_stage.style.backgroundColor = "white";
+	document.body.style.backgroundImage = "https://github.com/GameGibbons/Prison-Escape-Game/tree/master/Project/img('ControlsPage.jpg')";
 	activeBtns = [ buttons[2] ];
 }
 
