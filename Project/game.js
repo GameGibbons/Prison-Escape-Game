@@ -134,7 +134,7 @@ function exitGame()
 function enterHelp()
 {
 	console.log("Entering help state.");
-	_stage.style.backgroundColor = "green";
+	_stage.style.backgroundColor = "white";
 	activeBtns = [ buttons[2] ];
 }
 
