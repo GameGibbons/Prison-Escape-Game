@@ -3,6 +3,11 @@ body {
 	text-align: center;
 }
 
+#helpMessage {
+	margin-left: auto;
+	margin-right: auto;
+}
+
 #stage {
 	background-color: black;
 	width: 1024px;

@@ -1,8 +1,6 @@
-var _stage = document.getElementById("stage");
-var _canvas = document.querySelector("canvas");
-_canvas.width = 1024;
-_canvas.height = 768;
-var surface = _canvas.getContext("2d");
+//============================================================================
+// Game Script. Provides state machine functionality that the game is run on.
+//============================================================================
 
 /* states is an array of objects where each object is a state with an enter, update and exit function. These
    functions get called in the changeState function. */
@@ -13,9 +11,9 @@ var lastState = -1; // These two variables should be indices for the states arra
 var currState = -1;
 
 // The buttons array stores information about all buttons for my simple UI that just changes states.
-var buttons = [{ img: "img/btnStart.png", imgO: "img/btnStartO.png", x: 448, y: 512, w: 128, h: 32, over: false, click: onStartClick }, // Start button
-			   { img: "img/btnHelp.png", imgO: "img/btnHelpO.png", x: 64, y: 704, w: 128, h: 32, over: false, click: onHelpClick }, // Help button
-			   { img: "img/btnExit.png", imgO: "img/btnExitO.png", x: 832, y: 704, w: 128, h: 32, over: false, click: onExitClick }, ] // Exit button
+var buttons = [{ img: "img/btn_img/btnStart.png", imgO: "img/btn_img/btnStartO.png", x: 448, y: 512, w: 128, h: 32, over: false, click: onStartClick }, // Start button
+			   { img: "img/btn_img/btnHelp.png", imgO: "img/btn_img/btnHelpO.png", x: 64, y: 704, w: 128, h: 32, over: false, click: onHelpClick }, // Help button
+			   { img: "img/btn_img/btnExit.png", imgO: "img/btn_img/btnExitO.png", x: 448, y: 672, w: 128, h: 32, over: false, click: onExitClick }, ] // Exit button
 
 // The activeBtns array is set in each enter function for each state and holds the buttons currently on screen.
 var activeBtns = [];
@@ -23,8 +21,6 @@ var numAssets = 6;
 var assetsLoaded = 0;
 
 var mouse = { x: 0, y: 0 }; // Stores mouse position in canvas.
-
-var player = { x: 0, y: 0, img: null };
 
 const fps = 30; // or 60. The game's set frame rate all update functions will run at.
 const fpsMS = 1/fps*1000; // The frames per second as a millisecond interval.
@@ -35,11 +31,17 @@ _canvas.addEventListener("mousemove", updateMouse);
 _canvas.addEventListener("click", onMouseClick);
 
 // Listen for key input.
-window.addEventListener("keydown", function(e){
+window.addEventListener("keydown", function (e) {
 
     switch (e.key)
     {
-        // Add input here.
+        // Pause game.
+        case "Escape":
+            if (currState == 1)
+                changeState(2);
+            else if (currState == 2)
+                changeState(1);
+            break;
     }
 })
 
@@ -62,10 +64,10 @@ function loadAssets(event)
 function onAssetLoad(event)
 {
 	if (++assetsLoaded == numAssets)
-		initGame();
+		init();
 }
 			  
-function initGame()
+function init()
 {
 	// This function can be called to kick-off the game when all important main/menu assets are loaded.
 	changeState(0); // Change to menu state.
@@ -92,7 +94,7 @@ function changeState(stateToRun)
 function enterMenu()
 {
 	console.log("Entering menu state.");
-	_stage.style.backgroundColor = "cyan";
+	_stage.style.backgroundColor = "white";
 	activeBtns = [ buttons[0] ];
 }
 
@@ -112,18 +114,21 @@ function enterGame()
 {
 	console.log("Entering game state.");
 	_stage.style.backgroundColor = "white";
-	activeBtns = [ buttons[1], buttons[2] ]; // Clear the active buttons array.
+	_stage.style.backgroundImage = ""; // Clear any existing background image.
+	document.getElementById("helpMessage0").innerHTML = "Press escape for help";
+	document.getElementById("helpMessage1").innerHTML = "Press C To Change Skins";
+	document.getElementById("helpMessage2").innerHTML = "Hold Shift To Alleviate Boredom";
+	activeBtns = []; // Clear the active buttons array.
+
 }
 
 // GAME UPDATE
 function updateGame()
 {
     console.log("In game state.");
-    checkButtons();
-    playerMovement();  
-    collision(); 
-    ui(); 
-	render();
+    
+    updateLevel(); // Call Level manager update function.
+    renderHUD();
 }
 
 function exitGame()
@@ -134,7 +139,8 @@ function exitGame()
 function enterHelp()
 {
 	console.log("Entering help state.");
-	_stage.style.backgroundColor = "green";
+	_stage.style.backgroundColor = "white"; // Setup background colour.
+	_stage.style.backgroundImage = "url('img/ControlsPage.jpg')"; // Setup background image.
 	activeBtns = [ buttons[2] ];
 }
 
@@ -226,18 +232,3 @@ function updateMouse(event)
 	mouse.x = event.clientX - rect.left;
     mouse.y = event.clientY - rect.top;
 }	
-
-function playerMovement()
-{
-    // Add player movement functionality here.
-}
-
-function collision()
-{
-    // Add collision detection here.
-}
-
-function ui()
-{
-    // Add UI functionality.
-}

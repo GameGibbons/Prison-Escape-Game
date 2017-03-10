@@ -1,0 +1,15 @@
+Resurgence Ver 0.2.3
+
+Change(s):
++ Added doors to tile objects; doors should now scroll
++ Added UI, Asset Manager, Canvas, and Enemy components
++ Added UI image folder with UI-related images
+- Removed canvas setup in game script 
+- Removed unecessary images from level and player image folders
+~ Floor images should now be drawn below door images
+~ Fixed image tearing(repeating wall image) in up and down scrolling 
+
+Known bug(s):
+! Door animations not being triggered:
+	could be due to the way the collision detection in the playerAtDoor 
+	function is setup--in the if check for collision. 
