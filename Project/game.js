@@ -139,8 +139,12 @@ function exitGame()
 function enterHelp()
 {
 	console.log("Entering help state.");
+<<<<<<< HEAD
 	_stage.style.backgroundColor = "white"; // Setup background colour.
 	_stage.style.backgroundImage = "url('img/ControlsPage.jpg')"; // Setup background image.
+=======
+	_stage.style.backgroundImage = "img/ControlsPage.jpg";
+>>>>>>> 323efc58f80eec03fd8f06d580e05e5f265f7bfb
 	activeBtns = [ buttons[2] ];
 }
 
@@ -231,4 +235,23 @@ function updateMouse(event)
 	var rect = _canvas.getBoundingClientRect();
 	mouse.x = event.clientX - rect.left;
     mouse.y = event.clientY - rect.top;
+<<<<<<< HEAD
 }	
+=======
+}	
+
+function playerMovement()
+{
+    // Add player movement functionality here.
+}
+
+function collision()
+{
+    // Add collision detection here.
+}
+
+function ui()
+{
+    // Add UI functionality.
+}
+>>>>>>> 323efc58f80eec03fd8f06d580e05e5f265f7bfb
