@@ -23,7 +23,7 @@ var activeKeycards = [false, false, false, false, false, false, false];
 var inventory = [{item: null, inUse: false}, 
 				 {item: null, inUse: false}	];
 
-var itemEnum = ["gun", "knife", "flashbang"]; // The location of the items in the item image.
+var itemEnum = ["gun", "knife", "nailboard"]; // The location of the items in the item image.
 
 // HUD images.
 var keycardImg = "img/ui_img/keycard_sheet.png";
@@ -47,6 +47,7 @@ function renderHUD()
 	drawKeycards();
 	drawInventory();
 	drawAlert();
+	drawStorageUI();
 }
 
 function debugInput(e)
@@ -74,25 +75,25 @@ function debugInput(e)
 	    case "7":
 	        activeKeycards[6] === false ? activeKeycards[6] = true : activeKeycards[6] = false;
 	        break;
-		case "q":	// Equip gun.
+		/* case "i":	// Equip gun.
 			equipItem(itemEnum.indexOf("gun"));
 			break;
-		case "e":   // Equip knife.
+		case "o":   // Equip knife.
 		    equipItem(itemEnum.indexOf("knife"));
 			break;
-		case "w":   // Equip flashbang.
-			equipItem(itemEnum.indexOf("flashbang"));
-			break;
-		case "r":   // Unequip slot 1.
+		case "p":   // Equip nailboard.
+			equipItem(itemEnum.indexOf("nailboard"));
+			break; 
+		case "k":   // Unequip slot 1.
 		    unequipItem(0);
 			break;
-		case "t":   // Unequip slot 2.
+		case "l":   // Unequip slot 2.
 			unequipItem(1);
-			break;
-		case "g":   // Decrease alert.
+			break;*/
+		case ",":   // Decrease alert.
 			decreaseAlert();
 			break;
-		case "h":   // Increase alert.
+		case ".":   // Increase alert.
 			increaseAlert();
 			break;
 		default:
@@ -148,18 +149,42 @@ function drawInventory()
 }
 
 // This function takes an index of the item enummeration and sees if there is a slot available for it.
-function equipItem(itemToEquip)
+function equipItemP(itemToEquip)
 {
-	if(!inventory[0].inUse)
+	inventory[0].item = itemToEquip;
+		inventory[0].inUse = true;
+		Primary (itemToEquip);
+	/*if(!inventory[0].inUse)
 	{
 		inventory[0].item = itemToEquip;
 		inventory[0].inUse = true;
+		Primary (itemToEquip);
 	}
 	else if(!inventory[1].inUse)
 	{
 		inventory[1].item = itemToEquip;
 		inventory[1].inUse = true;
+		Secondary (itemToEquip);
+	}*/
+}
+
+function equipItemS(itemToEquip)
+{
+	inventory[1].item = itemToEquip;
+		inventory[1].inUse = true;
+		Secondary (itemToEquip);
+	/*if(!inventory[0].inUse)
+	{
+		inventory[0].item = itemToEquip;
+		inventory[0].inUse = true;
+		Primary (itemToEquip);
 	}
+	else if(!inventory[1].inUse)
+	{
+		inventory[1].item = itemToEquip;
+		inventory[1].inUse = true;
+		Secondary (itemToEquip);
+	}*/
 }
 
 // This function takes an inventory slot and resets it.
@@ -295,3 +320,47 @@ function increaseAlert() { if(alertLevel < 5) {alertLevel += 1;} }
 
 function decreaseAlert() { if(alertLevel > 1) {alertLevel -= 1;} }
 
+function drawStorageUI()
+{
+    storage.forEach(function (el)
+    {
+        if(el.draw === true)
+        {
+            // Draw slot UI.
+            surface.drawImage(el.img,
+                              el.frameIdx * 48, 124 * el.dir, 48, 124,
+                              player.x + 45, player.y, 48, 124)
+
+            // Draw each item per slot.
+            item.forEach(function (el)
+            {
+                if (el.slot === 0)
+                    surface.drawImage(el.img,
+                                      el.x, el.y, 32, 32,
+                                      player.x + 53, player.y + 9, 32, 32);
+                if (el.slot === 1)
+                    surface.drawImage(el.img,
+                                      el.x, el.y, 32, 32,
+                                      player.x + 53, player.y + 46, 32, 32);
+                if (el.slot === 2)
+                    surface.drawImage(el.img,
+                                      el.x, el.y, 32, 32,
+                                      player.x + 53, player.y + 83, 32, 32);
+            })
+
+            // Draw selection cursor.
+            if (Icursor.slot === 0)
+                surface.drawImage(Icursor.img,
+                                  Icursor.x, Icursor.y, 32, 32,
+                                  player.x + 53, player.y + 9, 32, 32);
+            if (Icursor.slot === 1)
+                surface.drawImage(Icursor.img,
+                                  Icursor.x, Icursor.y, 32, 32,
+                                  player.x + 53, player.y + 46, 32, 32);
+            if (Icursor.slot === 2)
+                surface.drawImage(Icursor.img,
+                                  Icursor.x, Icursor.y, 32, 32,
+                                  player.x + 53, player.y + 83, 32, 32);
+        }
+    });
+}

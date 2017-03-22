@@ -3,17 +3,21 @@
 //============================================================
 
 var CharSkin = 0;
+var ItemWindow = 0;
 var shiftPressed = false;
 var upPressed = false;
 var downPressed = false;
 var leftPressed = false;
 var rightPressed = false;
 var CPressed = false;
+var EPressed = false;
+var FPressed = false;
+var GPressed = false
 var images = [new Image(), new Image()];
 images[0].src = "img/player_img/Prisoner.png";
 images[1].src = "img/player_img/Guard.png";
 
-var player = {img:null, x:496, y:352, w:30, h:38, dir:0, speed:4, idle:true, // for dir 0=down, 1=up, 2=right, 3=left
+var player = {img:null, x:496, y:384, w:30, h:38, dir:0, speed:4, idle:true, // for dir 0=down, 1=up, 2=right, 3=left
 left:null, right:null, top:null, bottom:null, 
 colL:false, colR:false, colT:false, colB:false}; 
 
@@ -52,6 +56,18 @@ function onKeyDown(event)
 			if (CPressed == false)
 				CPressed = true;
 			break;
+		case 69: // E
+			if (EPressed == false)
+				EPressed = true;
+			break;
+		case 70: // F
+			if (FPressed == false)
+				FPressed = true;
+			break
+		case 71: // G
+			if (GPressed == false)
+				GPressed = true;
+			break
 	}
 }
 
@@ -77,6 +93,15 @@ function onKeyUp(event)
 		case 67:
 			CPressed = false; 
 			break;
+		case 69:
+			EPressed = false;
+			break;
+		case 70:
+			FPressed = false;
+			break;
+		case 71:
+			GPressed = false;
+			break;
 	}
 }
 
@@ -92,25 +117,96 @@ function handleInput()
 	else if (shiftPressed == false)
 		player.speed = 4;
 
-	if (downPressed == true)
-	{
-		player.dir = 0;
-		player.idle = false;
+	itemTiles.forEach(function(el){
+		if (EPressed == true && el.search == true && el.playerAt == true)
+		{
+			if (ItemWindow == 0)
+				ItemWindow = 1;
+			else if (ItemWindow == 1)
+				ItemWindow = 0;
+		
+			EPressed = false;
+		}
+	})
+	storage.forEach(function(el){
+		if (ItemWindow == 1) {
+			if (el.state === 2) {
+				el.idle = false;
+				el.state = 1;
+				el.draw = true;
+			}
+		}
+		else{
+			if (el.state === 1) {
+				el.idle = false;
+				el.state = 2;
+			}
+		}
+	})
+	if (ItemWindow == 0){
+		if (downPressed == true){
+			player.dir = 0;
+			player.idle = false;
+		}
+		else if (upPressed == true){
+			player.dir = 1;
+			player.idle = false;
+		}
+		else if (rightPressed == true){
+			player.dir = 2;
+			player.idle = false;
+		}
+		else if (leftPressed == true){
+			player.dir = 3;
+			player.idle = false;
+		}
+		else if (FPressed == true){
+			console.log("pew");
+			FPressed = false;
+		}
+		else if (GPressed == true){
+			console.log("stab");
+			GPressed = false;
+		}
+		else{
+			player.idle = true;
+		}
 	}
-	else if (upPressed == true)
-	{
-		player.dir = 1;
-		player.idle = false;
-	}
-	else if (rightPressed == true)
-	{
-		player.dir = 2;
-		player.idle = false;
-	}
-	else if (leftPressed == true)
-	{
-		player.dir = 3;
-		player.idle = false;
+	else if (ItemWindow == 1){
+		if (downPressed == true){
+			if (Icursor.slot == 0)
+				Icursor.slot = 1;
+			else if (Icursor.slot == 1)
+				Icursor.slot = 2;
+			downPressed = false;
+		}
+		else if (upPressed == true){
+			if (Icursor.slot == 2)
+				Icursor.slot = 1;
+			else if (Icursor.slot == 1)
+				Icursor.slot = 0;
+			upPressed = false;
+		}
+		else if (FPressed == true){
+			console.log("Equipped Primary")
+			if (Icursor.slot == 0)
+				equipItemP(itemEnum.indexOf("nailboard"));
+			else if (Icursor.slot == 1)
+				equipItemP(itemEnum.indexOf("knife"));
+			else if (Icursor.slot == 2)
+				equipItemP(itemEnum.indexOf("gun"));
+			FPressed = false;
+		}
+		else if (GPressed == true){
+			console.log("Equipped Secondary")
+			if (Icursor.slot == 0)
+				equipItemS(itemEnum.indexOf("nailboard"));
+			else if (Icursor.slot == 1)
+				equipItemS(itemEnum.indexOf("knife"));
+			else if (Icursor.slot == 2)
+				equipItemS(itemEnum.indexOf("gun"));
+			GPressed = false;
+		}
 	}
 	else if (CPressed == true)
 	{		
@@ -131,14 +227,25 @@ function handleInput()
    or if movements has been stopped by a wall segment. */
 function movePlayer()
 {
-    if (leftPressed == true && player.colL == false) // Here is where we use the collision flags.
-		player.x -= player.speed; 
-	if ( rightPressed == true && player.colR == false)
-		player.x += player.speed;
-	if ( upPressed == true && player.colT == false)
-		player.y -= player.speed;
-	if ( downPressed == true && player.colB == false)
-		player.y += player.speed;
+    if(ItemWindow==0)
+    {
+		if (leftPressed == true && player.colL == false) // Here is where we use the collision flags.
+			player.x -= player.speed; 
+		if ( rightPressed == true && player.colR == false)
+			player.x += player.speed;
+		if ( upPressed == true && player.colT == false)
+			player.y -= player.speed;
+		if ( downPressed == true && player.colB == false)
+			player.y += player.speed;
+	}
+
+	itemTiles.forEach(function(el)
+    {
+		if (!((player.x + player.w > el.x) || (player.x < el.x + 64) || (player.y + player.h > el.y) || (player.y < el.y + 64)))
+		    el.playerAt = false;
+		else
+		    el.playerAt = true;
+	})
 }
 
 function animatePlayer()

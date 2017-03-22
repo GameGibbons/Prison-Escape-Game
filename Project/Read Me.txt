@@ -1,15 +1,55 @@
-Resurgence Ver 0.2.3
+Resurgence Ver 0.4.0A
 
-Change(s):
+Change(s) since version 0.0.0:
++ Added new Asset Loading State Machine
++ Added temporary Name (Resurgence)
++ Added level manager
++ Added level 1 script
++ Added door animations
++ Added enemy waypoints
 + Added doors to tile objects; doors should now scroll
 + Added UI, Asset Manager, Canvas, and Enemy components
 + Added UI image folder with UI-related images
++ Added object placement to level manager and level 1 scripts.
++ Added debug function for drawing the player bounding boxes.
++ Added enemies and custom waypoint placement.
++ Added waypoint ordering. Waypoints can now be ordered by the client programmer.
++ Added door animations
++ Added lockable doors
++ Added new tileset
++ Added new tiles
++ Added door type 1
++ Added door type 2
++ Added functional mock UI
++ Added mock Items
++ Added lockers for item storage
++ Added enemies
++ Added enemy waypoints
++ Added mock level 1
+- Removed old Asset Loading State Machine
+- Removed unused Images
 - Removed canvas setup in game script 
 - Removed unecessary images from level and player image folders
+~ Control changed form WSAD to ARROW KEYS
+~ Fixed Room Layouts
+~ Fixed room scrolling
 ~ Floor images should now be drawn below door images
 ~ Fixed image tearing(repeating wall image) in up and down scrolling 
+~ Fixed enemy waypoint following
+~ Fixed door scrolling
+~ Changed door type 1 to type 4
+~ Fixed locked door scrolling
+~ Cards now unlock doors
+~ Locked doors are now collidable
+~ Added collisions to non wall objects
+~ Cards now unlock doors
+~ Locked doors are now collidable
+~ Added collisions to non wall objects
 
 Known bug(s):
-! Door animations not being triggered:
-	could be due to the way the collision detection in the playerAtDoor 
-	function is setup--in the if check for collision. 
+! Collisions between the player and inner corner walls result in undefined behaviour. 
+! Holding shift and going to any collidable object may result in undefined behaviour.
+! Locker UI will not appear until the player is within a room with a locker, at which point the UI can be called out from whichever room.
+! Door animations may spaz out when entering new room
+
+NOTE: Due to time constraints some of the rooms are unfinished

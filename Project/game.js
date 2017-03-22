@@ -116,7 +116,7 @@ function enterGame()
 	_stage.style.backgroundColor = "white";
 	_stage.style.backgroundImage = ""; // Clear any existing background image.
 	document.getElementById("helpMessage0").innerHTML = "Press escape for help";
-	document.getElementById("helpMessage1").innerHTML = "Press C To Change Skins";
+	//document.getElementById("helpMessage1").innerHTML = "Press C To Change Skins";
 	document.getElementById("helpMessage2").innerHTML = "Hold Shift To Alleviate Boredom";
 	activeBtns = []; // Clear the active buttons array.
 
@@ -125,10 +125,10 @@ function enterGame()
 // GAME UPDATE
 function updateGame()
 {
-    console.log("In game state.");
+    //console.log("In game state.");
     
     updateLevel(); // Call Level manager update function.
-    renderHUD();
+    //renderHUD();
 }
 
 function exitGame()
@@ -138,11 +138,9 @@ function exitGame()
 
 function enterHelp()
 {
-    console.log("Entering help state.");
-
+	console.log("Entering help state.");
 	_stage.style.backgroundColor = "white"; // Setup background colour.
 	_stage.style.backgroundImage = "url('img/ControlsPage.jpg')"; // Setup background image.
-
 	activeBtns = [ buttons[2] ];
 }
 
@@ -233,4 +231,4 @@ function updateMouse(event)
 	var rect = _canvas.getBoundingClientRect();
 	mouse.x = event.clientX - rect.left;
     mouse.y = event.clientY - rect.top;
-}
+}	
