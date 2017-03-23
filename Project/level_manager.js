@@ -277,8 +277,10 @@ function buildRoom(roomArr, roomIdx, startLoc)
 			var tempTile = {};
 			var tempIdx = rooms[roomIdx][row][col];
 			tempTile.x = startLoc.x + col * 64; // Sets the tile position based on the starting location.
-			tempTile.y = startLoc.y+row*64+ROOM_UI_OFFSET; 
-			tempTile.w = tempTile.h = 64; // Need these for collision. Width and height of a tile.
+			tempTile.y = startLoc.y + row * 64 + ROOM_UI_OFFSET; 
+			tempTile.w = tempTile.h = 64;
+            tempTile.collider = {x:tempTile.x, y:tempTile.y, w:tempTile.w, h:tempTile.h}; // Customizable collider object for tile collisions.
+
 			if (typeof tempIdx === 'object') 
             { // If the tile is a door object and not just an integer. 
 
@@ -333,6 +335,9 @@ function buildRoom(roomArr, roomIdx, startLoc)
 								case 17:
 			                        tempTile.doorImg = door[17];
 									break;
+                                default:
+                                    console.log("Door type not recognized.");
+                                    break;
 			                }
 			            }
 			            else 
@@ -350,8 +355,29 @@ function buildRoom(roomArr, roomIdx, startLoc)
 			                        break;
 			                    case 3: // Left.
 			                        tempTile.doorImg = door[2];
+                                    break;
 			                }
 			            }
+
+                        switch(tempIdx.dir) // Customize door collider based on its direction.
+                        {
+                            case 0:
+                                tempTile.collider.y += 64;
+                                tempTile.collider.h = 2;
+                                break;
+                            case 1:
+                                tempTile.collider.y -= 64;
+                                tempTile.collider.h = 2;
+                                break;
+                            case 2:
+                                tempTile.collider.x += 64;
+                                tempTile.collider.w = 2;
+                                break;
+                            case 3:
+                                tempTile.collider.x -= 64;
+                                tempTile.collider.w = 2;
+                                break;
+                        }
 
 			            tempTile.isDoor = true;
 			            tempTile.doorDest = tempIdx.dest;
@@ -433,8 +459,8 @@ function updateLevel()
     else { // We're not scrolling so game on...
         handleInput();
         movePlayer();
-        moveEnemies();
         updatePlayerBounds();
+        moveEnemies();
         animate();
         checkCollision();
         playerAtDoor();
@@ -445,9 +471,6 @@ function updateLevel()
 
 function doRoomScroll()
 {
-	//door.forEach(function(el){
-					 //el.frameIndexDoor = 0;
-		//})
 	for (var row = 0; row < ROWS; row++)
 	{
 		for (var col = 0; col < COLS; col++)
@@ -457,18 +480,26 @@ function doRoomScroll()
 				case 0:
 					currRoom[row][col].y -= scrollSpeed;
 					nextRoom[row][col].y -= scrollSpeed;
+                    currRoom[row][col].collider.y -= scrollSpeed;
+                    nextRoom[row][col].collider.y -= scrollSpeed;
 					break;
 				case 1:
 					currRoom[row][col].y += scrollSpeed;
 					nextRoom[row][col].y += scrollSpeed;
+                    currRoom[row][col].collider.y += scrollSpeed;
+                    nextRoom[row][col].collider.y += scrollSpeed;
 					break;
 				case 2:
 					currRoom[row][col].x -= scrollSpeed;
 					nextRoom[row][col].x -= scrollSpeed;
+                    currRoom[row][col].collider.x -= scrollSpeed;
+                    nextRoom[row][col].collider.x -= scrollSpeed;
 					break;
 				case 3:
 					currRoom[row][col].x += scrollSpeed;
 					nextRoom[row][col].x += scrollSpeed;
+                    currRoom[row][col].collider.x += scrollSpeed;
+                    nextRoom[row][col].collider.x += scrollSpeed;
 					break;
 			}
 		}
@@ -499,12 +530,12 @@ function checkCollision()
 	var door;
 	for (var i = 0; i < colTiles.length; i++)
 	{
-		if (!(player.left.l > colTiles[i].x+colTiles[i].w ||
-			  player.left.r < colTiles[i].x ||
-			  player.left.t > colTiles[i].y+colTiles[i].h || 
-			  player.left.b < colTiles[i].y))
+		if (!(player.left.l > colTiles[i].collider.x+colTiles[i].collider.w ||
+			  player.left.r < colTiles[i].collider.x ||
+			  player.left.t > colTiles[i].collider.y+colTiles[i].collider.h || 
+			  player.left.b < colTiles[i].collider.y))
 		{
-			player.x = colTiles[i].x+colTiles[i].w; // This first line will bounce the player back to just touching the wall.
+			player.x = colTiles[i].collider.x + colTiles[i].collider.w; // This first line will bounce the player back to just touching the wall.
 			player.colL = true; // Sets the respective collision flag to true.
 			if (colTiles[i].isDoor == true && colTiles[i].doorImg.lock === false)
 			{ // If we're colliding with a door.
@@ -513,12 +544,12 @@ function checkCollision()
 				break; // I've hit a door so the break will immediately exit the for loop and prevent other unneeded checks.
 			}
 		}
-		if (!(player.right.l > colTiles[i].x+colTiles[i].w ||
-			  player.right.r < colTiles[i].x ||
-			  player.right.t > colTiles[i].y+colTiles[i].h || 
-			  player.right.b < colTiles[i].y))
+		if (!(player.right.l > colTiles[i].collider.x+colTiles[i].collider.w ||
+			  player.right.r < colTiles[i].collider.x ||
+			  player.right.t > colTiles[i].collider.y+colTiles[i].collider.h || 
+			  player.right.b < colTiles[i].collider.y))
 		{
-			player.x = colTiles[i].x-player.w;
+			player.x = colTiles[i].collider.x - player.w;
 			player.colR = true;
 			if (colTiles[i].isDoor == true && colTiles[i].doorImg.lock === false)
 			{
@@ -527,12 +558,12 @@ function checkCollision()
 				break;
 			}
 		}
-		if (!(player.top.l > colTiles[i].x+colTiles[i].w ||
-			  player.top.r < colTiles[i].x ||
-			  player.top.t > colTiles[i].y+colTiles[i].h || 
-			  player.top.b < colTiles[i].y))
+		if (!(player.top.l > colTiles[i].collider.x+colTiles[i].collider.w ||
+			  player.top.r < colTiles[i].collider.x ||
+			  player.top.t > colTiles[i].collider.y+colTiles[i].collider.h || 
+			  player.top.b < colTiles[i].collider.y))
 		{
-			player.y = colTiles[i].y+colTiles[i].h;
+			player.y = colTiles[i].collider.y + colTiles[i].collider.h;
 			player.colT = true;
 			if (colTiles[i].isDoor == true && colTiles[i].doorImg.lock === false)
 			{
@@ -541,12 +572,12 @@ function checkCollision()
 				break;
 			}
 		}
-		if (!(player.bottom.l > colTiles[i].x+colTiles[i].w ||
-			  player.bottom.r < colTiles[i].x ||
-			  player.bottom.t > colTiles[i].y+colTiles[i].h || 
-			  player.bottom.b < colTiles[i].y))
+		if (!(player.bottom.l > colTiles[i].collider.x+colTiles[i].collider.w ||
+			  player.bottom.r < colTiles[i].collider.x ||
+			  player.bottom.t > colTiles[i].collider.y+colTiles[i].collider.h || 
+			  player.bottom.b < colTiles[i].collider.y))
 		{
-			player.y = colTiles[i].y-player.h;
+			player.y = colTiles[i].collider.y - player.h;
 			player.colB = true;
 			if (colTiles[i].isDoor == true && colTiles[i].doorImg.lock === false)
 			{
