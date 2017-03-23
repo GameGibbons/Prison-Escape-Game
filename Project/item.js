@@ -66,10 +66,6 @@ function Primary(weapon)
 	{
 		prima=itemUse[weapon];
 	}
-/*	else
-	{
-		Secondary(weapon);
-	}*/
 }
 function Secondary(weapon)
 {

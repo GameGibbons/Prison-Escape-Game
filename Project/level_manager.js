@@ -421,18 +421,10 @@ function buildRoom(roomArr, roomIdx, startLoc)
 			    }
 
 			}
-			else if(tempIdx === 60) // If it's a locker.
-            {
-                tempTile.img = tileImages[60];
-                tempTile.playerAt = false;
-                tempTile.search = true;
-                tempTile.slot1 = 0;
-                tempTile.slot2 = 0;
-                tempTile.slot3 = 0;
-                itemTiles.push(tempTile);
-            }
             else
-		        tempTile.img = tileImages[tempIdx];
+            {
+                setIntTiles(tempIdx, tempTile);
+            }
 
 			if (tempIdx !== 0 && tempIdx !== 1 && tempIdx !== 8 && tempIdx !== 9 && tempIdx !== 10 && tempIdx !== 11 && tempIdx.ID !== 'enmy'
                 && tempIdx.ID !== 'wp')
@@ -851,4 +843,110 @@ function playerAtDoor()
         }
     }
 
+}
+
+/* This sets the integer tile's custom colliders if any are needed. Parameter 1: tempIdx. Parameter 2: tempTile.*/
+function setIntTiles(tileIdx, tile)
+{
+    switch(tileIdx)
+    {
+        case 60: // Regular locker.
+            tile.img = tileImages[60];
+            tile.playerAt = false;
+            tile.search = true;
+            tile.slot1 = 0;
+            tile.slot2 = 0;
+            tile.slot3 = 0;
+            itemTiles.push(tile);
+            break;
+        case 25: // File shelf bottom (up).
+            tile.img = tileImages[25];
+            tile.collider.h = 32;
+            break;
+        case 27: // File shelf bottom (left).
+            tile.img = tileImages[27];
+            tile.collider.w = 32;
+            break;
+        case 29: // File shelf bottom (right).
+            tile.img = tileImages[29];
+            tile.collider.x += 32;
+            tile.collider.w = 32;
+            break;
+        case 31: // File shelf bottom (down).
+            tile.img = tileImages[31];
+            tile.collider.y += 32;
+            tile.collider.h = 32;
+            break;
+        case 33: // Server tower bottom (up).
+            tile.img = tileImages[33];
+            tile.collider.h = 32;
+            break;
+        case 35: // Server tower bottom (left).
+            tile.img = tileImages[35];
+            tile.collider.w = 32;
+            break;
+        case 37: // Server tower bottom (right).
+            tile.img = tileImages[37];
+            tile.collider.x += 32;
+            tile.collider.w = 32;
+            break;
+        case 39: // Server tower bottom (down).
+            tile.img = tileImages[39];
+            tile.collider.y += 32;
+            tile.collider.h = 32;
+            break;
+        case 41: // Tape storage bottom (up).
+            tile.img = tileImages[41];
+            tile.collider.h = 32;
+            break;
+        case 43: // Tape storage bottom (left).
+            tile.img = tileImages[43];
+            tile.collider.w = 32;
+            break;
+        case 45: // Tape storage bottom (right).
+            tile.img = tileImages[45];
+            tile.collider.x += 32;
+            tile.collider.w = 32;
+            break;
+        case 47: // Tape storage bottom (down).
+            tile.img = tileImages[47];
+            tile.collider.y += 32;
+            tile.collider.h = 32;
+            break;
+        case 50: // Desk 1 left bottom (up).
+            tile.img = tileImages[50];
+            tile.collider.h = 32;
+            break;
+        case 51: // Desk 1 right bottom (up).
+            tile.img = tileImages[51];
+            tile.collider.h = 32;
+            break;
+        case 57: // Vending machines bottom (up).
+            tile.img = tileImages[57];
+            tile.collider.h = 32;
+            break;
+        case 65: // Washing machine bottom (up).
+            tile.img = tileImages[65];
+            tile.collider.h = 32;
+            break;
+        case 67: // Dryer bottom (up).
+            tile.img = tileImages[67];
+            tile.collider.h = 32;
+            break;
+        case 71: // Urinal bottom (up).
+            tile.img = tileImages[71];
+            tile.collider.h = 32;
+            break;
+        case 78: // Bottom left bathroom sinks (up).
+            tile.img = tileImages[78];
+            tile.collider.h = 32;
+            break;
+        case 79: // Bottom right bathroom sinks (up).
+            tile.img = tileImages[79];
+            tile.collider.h = 32;
+            break;
+        default:
+            tile.img = tileImages[tileIdx];
+            break;
+    }
 }

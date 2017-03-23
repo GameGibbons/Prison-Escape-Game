@@ -75,21 +75,6 @@ function debugInput(e)
 	    case "7":
 	        activeKeycards[6] === false ? activeKeycards[6] = true : activeKeycards[6] = false;
 	        break;
-		/* case "i":	// Equip gun.
-			equipItem(itemEnum.indexOf("gun"));
-			break;
-		case "o":   // Equip knife.
-		    equipItem(itemEnum.indexOf("knife"));
-			break;
-		case "p":   // Equip nailboard.
-			equipItem(itemEnum.indexOf("nailboard"));
-			break; 
-		case "k":   // Unequip slot 1.
-		    unequipItem(0);
-			break;
-		case "l":   // Unequip slot 2.
-			unequipItem(1);
-			break;*/
 		case ",":   // Decrease alert.
 			decreaseAlert();
 			break;
@@ -154,18 +139,6 @@ function equipItemP(itemToEquip)
 	inventory[0].item = itemToEquip;
 		inventory[0].inUse = true;
 		Primary (itemToEquip);
-	/*if(!inventory[0].inUse)
-	{
-		inventory[0].item = itemToEquip;
-		inventory[0].inUse = true;
-		Primary (itemToEquip);
-	}
-	else if(!inventory[1].inUse)
-	{
-		inventory[1].item = itemToEquip;
-		inventory[1].inUse = true;
-		Secondary (itemToEquip);
-	}*/
 }
 
 function equipItemS(itemToEquip)
@@ -173,18 +146,6 @@ function equipItemS(itemToEquip)
 	inventory[1].item = itemToEquip;
 		inventory[1].inUse = true;
 		Secondary (itemToEquip);
-	/*if(!inventory[0].inUse)
-	{
-		inventory[0].item = itemToEquip;
-		inventory[0].inUse = true;
-		Primary (itemToEquip);
-	}
-	else if(!inventory[1].inUse)
-	{
-		inventory[1].item = itemToEquip;
-		inventory[1].inUse = true;
-		Secondary (itemToEquip);
-	}*/
 }
 
 // This function takes an inventory slot and resets it.
