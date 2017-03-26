@@ -169,15 +169,6 @@ door[15] = { img: tileSet[4], dir:3, idle:true, state:2, frameIndexDoor:0, lock:
 door[16] = { img: tileSet[4], dir:0, idle:true, state:2, frameIndexDoor:0, lock:false };
 door[17] = { img: tileSet[4], dir:3, idle:true, state:2, frameIndexDoor:0, lock:false };
 
-
-/*var card = [];  //for col 0=red, 1=yellow, 2=blue, 3=green, 4=orange, 5=violet.
-card[0] = { img:images[4], have:false, col:0 };
-card[1] = { img:images[4], have:false, col:1 };
-card[2] = { img:images[4], have:false, col:2 };
-card[3] = { img:images[4], have:false, col:3 };
-card[4] = { img:images[4], have:false, col:4 };
-card[5] = { img:images[4], have:false, col:5 };*/
-
 //Room creation variables
 var currRoom = []; // This is the currently rendered room.
 var nextRoom = []; // The room we're going into. When the map scrolls, it also has to be rendered.
@@ -845,7 +836,7 @@ function playerAtDoor()
 
 }
 
-/* This sets the integer tile's custom colliders if any are needed. Parameter 1: tempIdx. Parameter 2: tempTile.*/
+/* This sets the integer tile's custom colliders if any are needed and its image. Parameter 1: tempIdx. Parameter 2: tempTile.*/
 function setIntTiles(tileIdx, tile)
 {
     switch(tileIdx)
@@ -950,3 +941,7 @@ function setIntTiles(tileIdx, tile)
             break;
     }
 }
+
+
+
+
