@@ -113,7 +113,7 @@ function handleInput()
 		player.img = images[0]; 
 	
 	if (shiftPressed == true)
-		player.speed = 10;
+		player.speed = 8;
 	else if (shiftPressed == false)
 		player.speed = 4;
 
@@ -241,9 +241,9 @@ function movePlayer()
 
 	itemTiles.forEach(function(el)
     {
-		if (!((player.x + player.w > el.x) || (player.x < el.x + 64) || (player.y + player.h > el.y) || (player.y < el.y + 64)))
-		    el.playerAt = false;
-		else
+        el.playerAt = false; // Reset playerAt property.
+
+		if (!(player.x > el.x + el.w || player.x + player.w < el.x || player.y > el.y + el.h || player.y + player.h < el.y))
 		    el.playerAt = true;
 	})
 }

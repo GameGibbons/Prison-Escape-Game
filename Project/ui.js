@@ -75,12 +75,6 @@ function debugInput(e)
 	    case "7":
 	        activeKeycards[6] === false ? activeKeycards[6] = true : activeKeycards[6] = false;
 	        break;
-		case ",":   // Decrease alert.
-			decreaseAlert();
-			break;
-		case ".":   // Increase alert.
-			increaseAlert();
-			break;
 		default:
 			break;
 	}

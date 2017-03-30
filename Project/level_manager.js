@@ -350,26 +350,6 @@ function buildRoom(roomArr, roomIdx, startLoc)
 			                }
 			            }
 
-                        switch(tempIdx.dir) // Customize door collider based on its direction.
-                        {
-                            case 0:
-                                tempTile.collider.y += 64;
-                                tempTile.collider.h = 2;
-                                break;
-                            case 1:
-                                tempTile.collider.y -= 64;
-                                tempTile.collider.h = 2;
-                                break;
-                            case 2:
-                                tempTile.collider.x += 64;
-                                tempTile.collider.w = 2;
-                                break;
-                            case 3:
-                                tempTile.collider.x -= 64;
-                                tempTile.collider.w = 2;
-                                break;
-                        }
-
 			            tempTile.isDoor = true;
 			            tempTile.doorDest = tempIdx.dest;
 			            tempTile.doorScroll = tempIdx.dir;
@@ -382,7 +362,7 @@ function buildRoom(roomArr, roomIdx, startLoc)
 			            tempTile.img = tileImages[0];
 
 			            var enemy = {
-			                img: enemyImg, x: (tempTile.x + tempTile.w / 2), y: (tempTile.y + tempTile.h / 2), w: ENEMY_WIDTH, h: ENEMY_HEIGHT,
+			                img: enemyImg, x: tempTile.x, y: tempTile.y, w: ENEMY_WIDTH, h: ENEMY_HEIGHT,
 			                speed: ENEMY_DEFAULT_SPEED, dx: 0, dy: 0, currWP: tempIdx.currWP, range: ENEMY_RANGE, firing: false, fireCtr: 0,
 			                frameCtr: 0, frameIdx: 0, maxFrames: 4, waypoint: tempIdx.wpIdx, dir: 0
 			            };
@@ -392,7 +372,7 @@ function buildRoom(roomArr, roomIdx, startLoc)
 			        case "wp": // Waypoint.
 			            tempTile.img = tileImages[0];
 
-			            var tempWP = { x: (tempTile.x + tempTile.w / 2), y: (tempTile.y + tempTile.h / 2), order: tempIdx.order };
+			            var tempWP = { x: tempTile.x, y: tempTile.y, order: tempIdx.order };
 
 			            if (tempIdx.wpIdx + 1 > activeWP.length) 
                         {
@@ -836,7 +816,7 @@ function playerAtDoor()
 
 }
 
-/* This sets the integer tile's custom colliders if any are needed and its image. Parameter 1: tempIdx. Parameter 2: tempTile.*/
+/* This sets the integer tile's custom colliders if any are needed. Parameter 1: tempIdx. Parameter 2: tempTile.*/
 function setIntTiles(tileIdx, tile)
 {
     switch(tileIdx)
@@ -941,7 +921,4 @@ function setIntTiles(tileIdx, tile)
             break;
     }
 }
-
-
-
 

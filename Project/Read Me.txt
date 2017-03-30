@@ -1,7 +1,8 @@
-Resurgence Ver 0.4.1A - Collisions Branch
+Resurgence Ver 0.4.2A - Collisions Branch
 
 Change(s):
 + Added customizable colliders to each tile object.
+~ Fixed locker UI appearing even when the player is not near a storage object.
 
 Known bug(s):
 ! Collisions between the player and inner corner walls result in undefined behaviour. 

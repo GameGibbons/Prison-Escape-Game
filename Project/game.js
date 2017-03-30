@@ -116,7 +116,6 @@ function enterGame()
 	_stage.style.backgroundColor = "white";
 	_stage.style.backgroundImage = ""; // Clear any existing background image.
 	document.getElementById("helpMessage0").innerHTML = "Press escape for help";
-	//document.getElementById("helpMessage1").innerHTML = "Press C To Change Skins";
 	document.getElementById("helpMessage2").innerHTML = "Hold Shift To Alleviate Boredom";
 	activeBtns = []; // Clear the active buttons array.
 
@@ -125,10 +124,7 @@ function enterGame()
 // GAME UPDATE
 function updateGame()
 {
-    //console.log("In game state.");
-    
     updateLevel(); // Call Level manager update function.
-    //renderHUD();
 }
 
 function exitGame()
@@ -217,8 +213,6 @@ function onHelpClick()
 
 function onExitClick()
 {
-    //Need to modify to include new screens.
-    
     if (currState == 1)
 		changeState(0);
 	else if (currState == 2)
