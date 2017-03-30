@@ -1,9 +1,9 @@
-Unnamed Alpha Ver 0.4.2A - Collisions Branch
+Unnamed Alpha Ver 0.4.2A
 
 Change(s):
 + Added customizable colliders to each tile object.
 ~ Fixed locker UI appearing even when the player is not near a storage object.
-~ Collisions are now mitigated.
+~ Collision problems are now substantially mitigated if not fixed.
 
 Known bug(s):
 ! Door animations may spaz out when entering new room.
