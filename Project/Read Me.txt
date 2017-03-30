@@ -1,12 +1,9 @@
-Resurgence Ver 0.4.2A - Collisions Branch
+Unnamed Alpha Ver 0.4.2A - Collisions Branch
 
 Change(s):
 + Added customizable colliders to each tile object.
 ~ Fixed locker UI appearing even when the player is not near a storage object.
+~ Collisions are now mitigated.
 
 Known bug(s):
-! Collisions between the player and inner corner walls result in undefined behaviour. 
-! Holding shift and going to any collidable object may result in undefined behaviour.
-! Locker UI will not appear until the player is within a room with a locker, at which point the UI can be called 
-out from whichever room.
 ! Door animations may spaz out when entering new room.
