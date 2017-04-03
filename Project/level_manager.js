@@ -175,7 +175,7 @@ var nextRoom = []; // The room we're going into. When the map scrolls, it also h
 var colTiles = []; // An array holding the collision tiles. Only walls and doors currently.
 
 var rooms; // A three-dimensional array of the room maps.
-var startRoom = 0; // An index for the first room drawn.
+var startRoom = 21; // An index for the first room drawn.
 var roomScroll = false; // A flag for the update so it knows if we're in the scroll 'animation'
 var scrollDir = -1; // A value for the scrolling direction. 0=up, 1=down, 2=left, 3=right
 var scrollSpeed; // A value for the scrolling speed, i.e. the number of pixels the map moves per frame.
@@ -259,6 +259,7 @@ function buildRoom(roomArr, roomIdx, startLoc)
 	colTiles = []; // Resetting the colTiles array for the new room we're going into.
     activeEnemies = []; // Resetting the activeEnemies array for the new room.
     activeWP = []; // Resetting the activeWP array for the new room.
+    losTiles = [];
 
 	for (var row = 0; row < ROWS; row++)
 	{
@@ -364,7 +365,8 @@ function buildRoom(roomArr, roomIdx, startLoc)
 			            var enemy = {
 			                img: enemyImg, x: tempTile.x, y: tempTile.y, w: ENEMY_WIDTH, h: ENEMY_HEIGHT,
 			                speed: ENEMY_DEFAULT_SPEED, dx: 0, dy: 0, currWP: tempIdx.currWP, range: ENEMY_RANGE, firing: false, fireCtr: 0,
-			                frameCtr: 0, frameIdx: 0, maxFrames: 4, waypoint: tempIdx.wpIdx, dir: 0
+			                frameCtr: 0, frameIdx: 0, maxFrames: 4, waypoint: tempIdx.wpIdx, dir: 0, spottedPlyr: false, lastSpotted: null,
+                            isStunned: false, isDead: false, target: {x: this.x, y: this.y }, linecast: null
 			            };
 
 			            activeEnemies.push(enemy);
@@ -399,8 +401,11 @@ function buildRoom(roomArr, roomIdx, startLoc)
 
 			if (tempIdx !== 0 && tempIdx !== 1 && tempIdx !== 8 && tempIdx !== 9 && tempIdx !== 10 && tempIdx !== 11 && tempIdx.ID !== 'enmy'
                 && tempIdx.ID !== 'wp')
+            {
 			    colTiles.push(tempTile);
-				
+                losTiles.push(tempTile);
+			}
+            
 			roomArr[row][col] = tempTile;
 
             /***WARNING: These console logs are meant for debugging tile objects--the game will take a slight performance hit if they're uncommented.***/
@@ -408,7 +413,6 @@ function buildRoom(roomArr, roomIdx, startLoc)
 			//console.log(roomArr[row][col]);
 		}
 	}
-
 	setEnemyWaypoints(); // Begin setting each enemy with the waypoints that were collected from the level1 function.
 }
 

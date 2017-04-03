@@ -1,9 +1,10 @@
-Unnamed Alpha Ver 0.4.2A
+Unnamed Alpha Ver 0.4.5A
 
 Change(s):
-+ Added customizable colliders to each tile object.
-~ Fixed locker UI appearing even when the player is not near a storage object.
-~ Collision problems are now substantially mitigated if not fixed.
++ Added enemy line of sight.
+< Moved enemy image to "img/enemy_img".
 
 Known bug(s):
 ! Door animations may spaz out when entering new room.
+! Enemy may not notice player in front of them when patrolling
+in open areas. 

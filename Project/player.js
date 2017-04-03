@@ -118,7 +118,7 @@ function handleInput()
 		player.speed = 4;
 
 	itemTiles.forEach(function(el){
-		if (EPressed == true && el.search == true && el.playerAt == true)
+		if (EPressed == true && el.playerAt == true)
 		{
 			if (ItemWindow == 0)
 				ItemWindow = 1;
