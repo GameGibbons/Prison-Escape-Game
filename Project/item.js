@@ -13,9 +13,27 @@ var storage = [ { img: itemImg[0], dir: 0, idle: true, state: 2, frameIdx: 0, dr
 
 var itemTiles = []; // An array that holds container tiles.
 
-var item = [ {img:itemImg[1], x:32, y:0, slot:0},
-             {img:itemImg[1], x:64, y:0, slot:1},
-             {img:itemImg[1], x:96, y:0, slot:2} ];
+var item = [ {img:null, x:null, y:null},		//00 Empty
+			 {img:itemImg[1], x:32 , y:0  },	//01 2x4
+             {img:itemImg[1], x:64 , y:0  },	//02 Knife
+			 {img:itemImg[1], x:96 , y:0  },	//03 Gun
+			 {img:itemImg[1], x:128, y:0  },	//04 ---
+			 {img:itemImg[1], x:160, y:0  },	//05 ---
+			 {img:itemImg[1], x:192, y:0  },	//06 ---
+			 {img:itemImg[1], x:224, y:0  },	//07 ---
+			 {img:itemImg[1], x:256, y:0  },	//08 ---
+			 {img:itemImg[1], x:288, y:0  },	//09 ---
+			 {img:itemImg[1], x:0  , y:32 },	//10 Red Card
+			 {img:itemImg[1], x:32 , y:32 },	//11 Yellow Card
+			 {img:itemImg[1], x:64 , y:32 },	//12 Blue Card
+			 {img:itemImg[1], x:128, y:32 },	//13 Green Card
+			 {img:itemImg[1], x:160, y:32 },	//14 Orange Card
+			 {img:itemImg[1], x:192, y:32 },	//15 Purple Card
+			 {img:itemImg[1], x:224, y:32 },	//16 White Card
+             {img:itemImg[1], x:256, y:32 },	//17 Note
+			 {img:itemImg[1], x:288, y:32 },	//18 ---
+			 {img:itemImg[1], x:320, y:32 },	//19 ---
+			 {img:itemImg[1], x:0  , y:64 } ];	//20 ---
 
 var Icursor = { img: itemImg[1], x: 0, y: 0, slot: 0 };
 

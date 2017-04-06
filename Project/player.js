@@ -243,8 +243,11 @@ function movePlayer()
     {
         el.playerAt = false; // Reset playerAt property.
 
-		if (!(player.x > el.x + el.w || player.x + player.w < el.x || player.y > el.y + el.h || player.y + player.h < el.y))
+		if (!(player.x > el.x + el.w || player.x + player.w < el.x || player.y > el.y + el.h || player.y + player.h < el.y)){
 		    el.playerAt = true;
+			currItemTile = el;
+			//console.log("e is "+el.n);
+		}
 	})
 }
 

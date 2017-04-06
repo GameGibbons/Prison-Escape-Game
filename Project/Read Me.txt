@@ -1,10 +1,11 @@
-Unnamed Alpha Ver 0.4.5A
+Unnamed Alpha Ver 0.5.3A
 
 Change(s):
-+ Added enemy line of sight.
-< Moved enemy image to "img/enemy_img".
++ Added new item management system
++ Added new item images
+- Removed proxy art
+~ Fixed collisions
+~ Fixed enemy LOS
 
 Known bug(s):
 ! Door animations may spaz out when entering new room.
-! Enemy may not notice player in front of them when patrolling
-in open areas. 

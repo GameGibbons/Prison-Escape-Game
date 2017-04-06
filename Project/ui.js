@@ -279,29 +279,31 @@ function drawStorageUI()
 {
     storage.forEach(function (el)
     {
+		var i;
         if(el.draw === true)
         {
+			level1Sttorage();
             // Draw slot UI.
             surface.drawImage(el.img,
                               el.frameIdx * 48, 124 * el.dir, 48, 124,
                               player.x + 45, player.y, 48, 124)
 
             // Draw each item per slot.
-            item.forEach(function (el)
-            {
-                if (el.slot === 0)
-                    surface.drawImage(el.img,
-                                      el.x, el.y, 32, 32,
-                                      player.x + 53, player.y + 9, 32, 32);
-                if (el.slot === 1)
-                    surface.drawImage(el.img,
-                                      el.x, el.y, 32, 32,
-                                      player.x + 53, player.y + 46, 32, 32);
-                if (el.slot === 2)
-                    surface.drawImage(el.img,
-                                      el.x, el.y, 32, 32,
-                                      player.x + 53, player.y + 83, 32, 32);
-            })
+            for (i = 1; i < item.length; i++)
+			{	
+				if (i === s1)
+					surface.drawImage(item[i].img,
+									  item[i].x, item[i].y, 32, 32,
+									  player.x + 53, player.y + 9, 32, 32);
+				if (i === s2)
+					surface.drawImage(item[i].img,
+									  item[i].x, item[i].y, 32, 32,
+									  player.x + 53, player.y + 46, 32, 32);
+				if (i === s3)
+					surface.drawImage(item[i].img,
+									  item[i].x, item[i].y, 32, 32,
+									  player.x + 53, player.y + 83, 32, 32);
+			}
 
             // Draw selection cursor.
             if (Icursor.slot === 0)

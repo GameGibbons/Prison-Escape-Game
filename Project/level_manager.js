@@ -16,16 +16,16 @@ var levelToLoad = 0; // Tells the build rooms function what level to load. Zero 
 
 var tileSet = ["img/level_img/tile0.png", "img/level_img/tile1.png", "img/level_img/door0.png", "img/level_img/door1.png", "img/level_img/door2.png"];
 
-var tileImages = [{ tileImg: tileSet[0], x: 0  , y: 0  },  // 0 floor
-				  { tileImg: tileSet[0], x: 64 , y: 0  },  // 1 black space
-				  { tileImg: tileSet[0], x: 128, y: 0  },  // 2 ---
-				  { tileImg: tileSet[0], x: 192, y: 0  },  // 3 ---
-				  { tileImg: tileSet[0], x: 256, y: 0  },  // 4 top wall
-				  { tileImg: tileSet[0], x: 320, y: 0  },  // 5 right wall
-				  { tileImg: tileSet[0], x: 384, y: 0  },  // 6 bottom wall
-				  { tileImg: tileSet[0], x: 448, y: 0  },  // 7 left wall
-				  { tileImg: tileSet[0], x: 0  , y: 64 },  // 8 top right inner corner
-				  { tileImg: tileSet[0], x: 64 , y: 64 },  // 9 top left inner corner
+var tileImages = [{ tileImg: tileSet[0], x: 0  , y: 0  },  // 00 floor
+				  { tileImg: tileSet[0], x: 64 , y: 0  },  // 01 black space
+				  { tileImg: tileSet[0], x: 128, y: 0  },  // 02 ---
+				  { tileImg: tileSet[0], x: 192, y: 0  },  // 03 ---
+				  { tileImg: tileSet[0], x: 256, y: 0  },  // 04 top wall
+				  { tileImg: tileSet[0], x: 320, y: 0  },  // 05 right wall
+				  { tileImg: tileSet[0], x: 384, y: 0  },  // 06 bottom wall
+				  { tileImg: tileSet[0], x: 448, y: 0  },  // 07 left wall
+				  { tileImg: tileSet[0], x: 0  , y: 64 },  // 08 top right inner corner
+				  { tileImg: tileSet[0], x: 64 , y: 64 },  // 09 top left inner corner
 				  { tileImg: tileSet[0], x: 128, y: 64 },  // 10 bottom left inner corner
 				  { tileImg: tileSet[0], x: 192, y: 64 },  // 11 bottom right inner corner
 				  { tileImg: tileSet[0], x: 256, y: 64 },  // 12 top right outer corner
@@ -168,6 +168,9 @@ door[14] = { img: tileSet[4], dir:2, idle:true, state:2, frameIndexDoor:0, lock:
 door[15] = { img: tileSet[4], dir:3, idle:true, state:2, frameIndexDoor:0, lock:false };
 door[16] = { img: tileSet[4], dir:0, idle:true, state:2, frameIndexDoor:0, lock:false };
 door[17] = { img: tileSet[4], dir:3, idle:true, state:2, frameIndexDoor:0, lock:false };
+
+var s1, s2, s3;
+var currItemTile;
 
 //Room creation variables
 var currRoom = []; // This is the currently rendered room.
@@ -388,6 +391,16 @@ function buildRoom(roomArr, roomIdx, startLoc)
 			            else
 			                activeWP[tempIdx.wpIdx].push(tempWP);
 			            break;
+					case "st": // Storage.
+						if (typeof tempIdx.n !== "undefined") 
+						{
+							tempTile.img = tileImages[tempIdx.t];
+							setIntTiles(tempIdx.t, tempTile);
+							tempTile.n = tempIdx.n;
+							tempTile.s1 = tempIdx.s1;
+							tempTile.s2 = tempIdx.s2;
+							tempTile.s3 = tempIdx.s3;
+						}
 			        default:
 			            console.log("Rooms tile object is not recognized. Did you assign the correct ID?");
 			            break;
@@ -829,9 +842,36 @@ function setIntTiles(tileIdx, tile)
             tile.img = tileImages[60];
             tile.playerAt = false;
             tile.search = true;
-            tile.slot1 = 0;
-            tile.slot2 = 0;
-            tile.slot3 = 0;
+            itemTiles.push(tile);
+            break;
+		case 17: //locker against wall bottom (up)
+			tile.img = tileImages[17];
+			tile.collider.h = 32;
+			tile.playerAt = false;
+            tile.search = true;
+            itemTiles.push(tile);
+			break;
+		case 19: //locker against wall bottom (left)
+			tile.img = tileImages[19];
+			tile.collider.w = 32;
+			tile.playerAt = false;
+            tile.search = true;
+            itemTiles.push(tile);
+			break;
+		case 21: // locker against wall bottom (right)
+            tile.img = tileImages[21];
+            tile.collider.x += 32;
+            tile.collider.w = 32;
+			tile.playerAt = false;
+            tile.search = true;
+            itemTiles.push(tile);
+            break;
+		case 22: // locker against wall top (down)
+            tile.img = tileImages[22];
+            tile.collider.y += 32;
+            tile.collider.h = 32;
+			tile.playerAt = false;
+            tile.search = true;
             itemTiles.push(tile);
             break;
         case 25: // File shelf bottom (up).

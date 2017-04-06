@@ -13,7 +13,7 @@ var currState = -1;
 // The buttons array stores information about all buttons for my simple UI that just changes states.
 var buttons = [{ img: "img/btn_img/btnStart.png", imgO: "img/btn_img/btnStartO.png", x: 448, y: 512, w: 128, h: 32, over: false, click: onStartClick }, // Start button
 			   { img: "img/btn_img/btnHelp.png", imgO: "img/btn_img/btnHelpO.png", x: 64, y: 704, w: 128, h: 32, over: false, click: onHelpClick }, // Help button
-			   { img: "img/btn_img/btnExit.png", imgO: "img/btn_img/btnExitO.png", x: 448, y: 672, w: 128, h: 32, over: false, click: onExitClick }, ] // Exit button
+			   { img: "img/btn_img/btnBack.png", imgO: "img/btn_img/btnBackO.png", x: 448, y: 672, w: 128, h: 32, over: false, click: onExitClick }, ] // Exit button
 
 // The activeBtns array is set in each enter function for each state and holds the buttons currently on screen.
 var activeBtns = [];

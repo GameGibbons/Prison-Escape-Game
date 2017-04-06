@@ -6,7 +6,7 @@
 const ENEMY_WIDTH = 30;
 const ENEMY_HEIGHT = 38;
 const ENEMY_DEFAULT_SPEED = 4;
-const ENEMY_RANGE = 150;
+const ENEMY_RANGE = 400;
 const ENEMY_ALERT_TIME = 3; // In seconds.
 
 var activeEnemies = [];
@@ -72,48 +72,15 @@ function moveEnemies()
             el.y += el.dy;
         }
 
-        // Update target based on alert state.
-        if (!el.spottedPlyr)
-        {
-            el.target.x = el.x + el.w/2; 
-            el.target.y = el.y + el.h/2;
-        }
-        else
-        {
-            el.target.x = player.x + player.w/2;
-            el.target.y = player.y + player.h/2;
-        }
-
         /* Check what direction this enemy is moving in and set the enemy's direction and 
         target properties. Only update the target based on this enemy's direction if the 
         enemy hasn't spotted the player. Check if dx or dy aren't equal to zero and if 
-        they're negative or positive. */
+        they're negative or positive. dir 0=down, 1=up, 2=right, 3=left*/
         if(el.dx !== 0 && el.spottedPlyr === false)
-        {
-            if(el.dx < 0)
-            {
-                el.target.x -= el.range;
-                el.dir = 3;
-            }
-            else
-            {
-                el.target.x += el.range;
-                el.dir = 2
-            }
-        }
+            (el.dx < 0) ? el.dir = 3 : el.dir = 2;
+       
         if(el.dy !== 0 && el.spottedPlyr === false)
-        {
-            if(el.dy < 0)
-            {
-                el.target.y -= el.range;
-                el.dir = 1;
-            }
-            else
-            {
-                el.target.y += el.range;
-                el.dir = 0;
-            }
-        }
+            (el.dy < 0) ? el.dir = 1 : el.dir = 0;
 
         // Snap enemy to current waypoint and set the next waypoint if this enemy is close.
         if(calcDistance(el.x, el.waypoint[el.currWP].x, el.y, el.waypoint[el.currWP].y) <= el.speed/2)
@@ -139,7 +106,7 @@ function renderEnemies()
             surface.drawImage(el.img,
                               el.frameIdx * 30, el.dir * 38, ENEMY_WIDTH, ENEMY_HEIGHT,
                               el.x, el.y, ENEMY_WIDTH, ENEMY_HEIGHT);
-
+			
             // Draw enemy linecasts. [ Debugging only ]
             if(el.linecast !== null && el.linecast.length > 0)
             {
@@ -213,8 +180,8 @@ function calcDistance(x1, x2, y1, y2)
 
 function checkSight(enemy)
 {
-    var dx = enemy.target.x - (enemy.x + enemy.w/2);
-    var dy = enemy.target.y - (enemy.y + enemy.h/2);
+    var dx = (player.x + player.w/2) - (enemy.x + enemy.w/2);
+    var dy = (player.y + player.h/2) - (enemy.y + enemy.h/2);
     var segs = 8; // Segments of the distance between the enemy and target.
     var j;
     enemy.linecast = [];
@@ -232,55 +199,14 @@ function checkSight(enemy)
         else if(dy > 100)
             enemy.dir = 0;
     }
-
-    /* Here is where two different linecast checks are being done. The first check is when the enemy is in its patrolling state.
-    It first checks the linecast against the losTiles to see if it is hitting any of those tiles. It then checks the remaining 
-    linecast against the player and sets the enemy to its alert state if there is a hit. The second check is when the enemy is 
-    in its alert state. It checks the linecast against the losTiles like before; however, it counts the seconds that the linecast 
-    hits an losTile before setting the enemy back to the patrol state. */
-    if (!enemy.spottedPlyr)
-    {
-        for (var i = 0; i < losTiles.length; i++)
-        {
-            enemy.linecast = [];
-
-            for (j = 1; j <= segs; j++)
-            {
-                enemy.linecast.push( { x:(enemy.x+enemy.w/2)+(dx*(j/segs)), y:(enemy.y+enemy.h/2)+(dy*(j/segs)) } );
-
-                if( !(((enemy.x+enemy.w/2)-8)+(dx*(j/segs)) > losTiles[i].x+losTiles[i].w || 
-                      ((enemy.x+enemy.w/2)+8)+(dx*(j/segs)) < losTiles[i].x || 
-                      ((enemy.y+enemy.h/2)-8)+(dy*(j/segs)) > losTiles[i].y+losTiles[i].h || 
-                      ((enemy.y+enemy.h/2)+8)+(dy*(j/segs)) < losTiles[i].y ))
-                {
-                    i = losTiles.length;
-                    break;
-                }
-            }
-        }
-
-        // Check the remaining segments to see if the player is in sight. 
-        for (var i = 1; i < j; i++)
-        {
-            if ( !(((enemy.x+enemy.w/2)-8)+(dx*(i/segs)) > player.x+player.w ||
-                   ((enemy.x+enemy.w/2)+8)+(dx*(i/segs)) < player.x ||   
-                   ((enemy.y+enemy.h/2)-8)+(dy*(i/segs)) > player.y+player.h ||
-                   ((enemy.y+enemy.h/2)+8)+(dy*(i/segs)) < player.y ))
-            {
-                enemy.spottedPlyr = true;
-                enemy.lastSpotted = new Date(); // Get the time when the player was spotted.
-                break;
-            }
-        }
-    }
-    else
-    {
+	
+    if(calcDistance(player.x, enemy.x, player.y, enemy.y) <= enemy.range)
+	{
         /* Check the linecast against the losTiles and assume that no hits means that this enemy has regained line
         of sight with the player. */
         for (var i = 0; i < losTiles.length; i++)
         {
             enemy.linecast = [];
-
             for (j = 1; j <= segs; j++)
             {
                 enemy.linecast.push( { x:(enemy.x+enemy.w/2)+(dx*(j/segs)), y:(enemy.y+enemy.h/2)+(dy*(j/segs)) } );
@@ -290,25 +216,81 @@ function checkSight(enemy)
                       ((enemy.y+enemy.h/2)-8)+(dy*(j/segs)) > losTiles[i].y+losTiles[i].h ||
                       ((enemy.y+enemy.h/2)+8)+(dy*(j/segs)) < losTiles[i].y ))
                 {
+                    console.log("Works!");
+
                     i = losTiles.length;
 
-                    var currTime = new Date(); // Get the current time.
+                    if(enemy.spottedPlyr)
+                    {
+                        var currTime = new Date(); // Get the current time.
 
-                    // Check if the time since the player was last spotted is equal to the alert time.
-                    if( (currTime.getSeconds() - enemy.lastSpotted.getSeconds()) >= ENEMY_ALERT_TIME)
-                        enemy.spottedPlyr = false;
+                        if((currTime.getSeconds() - enemy.lastSpotted.getSeconds()) >= ENEMY_ALERT_TIME)
+                            enemy.spottedPlyr = false;
+                    }
 
                     break;
                 }
             }
         }
-
-        if (j === segs + 1 && enemy.spottedPlyr === true)
+		
+        if (j === segs + 1)
         {
-            enemy.lastSpotted = new Date();
+            /* Only spot the player if they are in front of the enemy. */
+            switch(enemy.dir)
+            {
+             case 1:
+                if(player.y+player.h/2 < enemy.y)
+                {
+                    console.log("Player found! 1");
+                    enemy.spottedPlyr = true;
+                    enemy.lastSpotted = new Date();
+                }
+                break;
+
+             case 0:
+                if(player.y > enemy.y+enemy.h/2)
+                {
+                    console.log("Player found! 0");
+                    enemy.spottedPlyr = true;
+                    enemy.lastSpotted = new Date();
+                }
+                break;
+
+             case 3:
+                if(player.x+player.w/2 < enemy.x)
+                {
+                    console.log("Player found! 3");
+                    enemy.spottedPlyr = true;
+                    enemy.lastSpotted = new Date();
+                }
+                break; 
+
+             case 2:
+                if(player.x > enemy.x+enemy.w/2)
+                {
+                    console.log("Player found! 2");
+			        enemy.spottedPlyr = true;
+			        enemy.lastSpotted = new Date();
+                } 
+                break;
+            }
+              
+            
 
             // Add firing here.
 
+        }
+    }
+    else
+    {
+        if(enemy.spottedPlyr)
+        {
+            console.log("Checking time.");
+
+            var currTime = new Date();
+
+            if((currTime.getSeconds() - enemy.lastSpotted.getSeconds()) >= ENEMY_ALERT_TIME)
+                enemy.spottedPlyr = false;
         }
     }
 }
