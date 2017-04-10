@@ -245,7 +245,7 @@ function level1()
 	rooms[19][6] =  [7  ,0  ,0  ,0  ,5  ,1  ,1  ,1  ,1  ,1  ,1  ,1  ,1  ,1  ,1  ,1  ];
 	rooms[19][7] =  [7  ,0  ,0  ,0  ,5  ,1  ,1  ,1  ,1  ,1  ,1  ,1  ,1  ,1  ,1  ,1  ];
 	rooms[19][8] =  [7  ,0  ,0  ,69 ,12 ,4  ,4  ,4  ,4  ,4  ,4  ,4  ,8  ,1  ,1  ,1  ];
-	rooms[19][9] =  [18 ,{ID:"st", n:9, t:19,s1:0,s2:3,s3:0},0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,5  ,1  ,1  ,1  ];
+	rooms[19][9] =  [18 ,{ID:"st", t:19, s1:0, s2:3, s3:0},0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,5  ,1  ,1  ,1  ];
 	rooms[19][10] = [10 ,6  ,6  ,6  ,6  ,{ID:"dr", dest:24, dir:0, px:352, py:130, d:15},6  ,6  ,6  ,6  ,{ID:"dr", dest:24, dir:0, px:672, py:130, d:17},6  ,11 ,1  ,1  ,1  ];
 	rooms[20] = [];
 	rooms[20][0] =  [9  ,4  ,24 ,24 ,24 ,24 ,4  ,{ID:"dr", dest:15, dir:1, px:480, py:654},4  ,8  ,9  ,4  ,48 ,49 ,4  ,8  ];
@@ -424,73 +424,4 @@ function level2()
 	rooms[8][8] =  [7 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,5 ];
 	rooms[8][9] =  [7 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,5 ];
 	rooms[8][10] = [10,6 ,6 ,6 ,6 ,6 ,6 ,6 ,6 ,6 ,6 ,6 ,6 ,6 ,6 ,11];
-}
-
-function level1Sttorage()
-{ //17,19,21,23,60  total: 9
-	/*0 = "none";
-	1 = "2x4";
-	2 = "gun";
-	10 = "redCard";
-	11 = "yellowCard";
-	12 = "blueCard";
-	13 = "greenCard";
-	14 = "orangeCard";
-	15 = "purpleCard";
-	16 = "whiteCard";*/
-
-	item.slot1 = s1;
-	item.slot2 = s2;
-	item.slot3 = s3;
-	var n = currItemTile.n;
-	console.log(n);
-	
-	
-	if(n == 1){
-		s1 = currItemTile.s1;
-		s2 = currItemTile.s2;
-		s3 = currItemTile.s3;
-	}
-	else if (n == 2){
-		s1 = currItemTile.s1;
-		s2 = currItemTile.s2;
-		s3 = currItemTile.s3;
-	}
-	else if (n == 3){
-		s1 = currItemTile.s1;
-		s2 = currItemTile.s2;
-		s3 = currItemTile.s3;
-	}
-	else if (n == 4){
-		s1 = currItemTile.s1;
-		s2 = currItemTile.s2;
-		s3 = currItemTile.s3;
-	}
-	else if (n == 5){
-		s1 = currItemTile.s1;
-		s2 = currItemTile.s2;
-		s3 = currItemTile.s3;
-	}
-	else if (n == 6){
-		s1 = currItemTile.s1;
-		s2 = currItemTile.s2;
-		s3 = currItemTile.s3;
-	}
-	else if (n == 7){
-		s1 = currItemTile.s1;
-		s2 = currItemTile.s2;
-		s3 = currItemTile.s3;
-	}
-	else if (n == 8){
-		s1 = currItemTile.s1;
-		s2 = currItemTile.s2;
-		s3 = currItemTile.s3;
-	}
-	else if (n == 9){
-		s1 = currItemTile.s1;
-		s2 = currItemTile.s2;
-		s3 = currItemTile.s3;
-	}
-	
-	
 }

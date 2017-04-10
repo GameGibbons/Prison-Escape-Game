@@ -8,6 +8,7 @@ const ENEMY_HEIGHT = 38;
 const ENEMY_DEFAULT_SPEED = 4;
 const ENEMY_RANGE = 400;
 const ENEMY_ALERT_TIME = 3; // In seconds.
+const ENEMY_CQC_RANGE = 50;
 
 var activeEnemies = [];
 var activeWP = []; // A dynamic 2D array to store enemy waypoint arrays to pass to enemy objects.
@@ -70,6 +71,9 @@ function moveEnemies()
         {
             el.x += el.dx;
             el.y += el.dy;
+
+            el.collider.x = el.x;
+            el.collider.y = el.y;
         }
 
         /* Check what direction this enemy is moving in and set the enemy's direction and 
@@ -92,6 +96,11 @@ function moveEnemies()
             calcDeltas(el);
         }
 
+        // Check if the player is within sriking distance and set the plyrNear flag.
+        if(calcDistance(player.x, el.x, player.y, el.y) <= ENEMY_CQC_RANGE)
+            el.plyrNear = true;
+        else
+            el.plyrNear = false;
 
         checkSight(el);
     })
@@ -216,8 +225,6 @@ function checkSight(enemy)
                       ((enemy.y+enemy.h/2)-8)+(dy*(j/segs)) > losTiles[i].y+losTiles[i].h ||
                       ((enemy.y+enemy.h/2)+8)+(dy*(j/segs)) < losTiles[i].y ))
                 {
-                    console.log("Works!");
-
                     i = losTiles.length;
 
                     if(enemy.spottedPlyr)
@@ -241,7 +248,7 @@ function checkSight(enemy)
              case 1:
                 if(player.y+player.h/2 < enemy.y)
                 {
-                    console.log("Player found! 1");
+                    //console.log("Player found! 1");
                     enemy.spottedPlyr = true;
                     enemy.lastSpotted = new Date();
                 }
@@ -250,7 +257,7 @@ function checkSight(enemy)
              case 0:
                 if(player.y > enemy.y+enemy.h/2)
                 {
-                    console.log("Player found! 0");
+                    //console.log("Player found! 0");
                     enemy.spottedPlyr = true;
                     enemy.lastSpotted = new Date();
                 }
@@ -259,7 +266,7 @@ function checkSight(enemy)
              case 3:
                 if(player.x+player.w/2 < enemy.x)
                 {
-                    console.log("Player found! 3");
+                    //console.log("Player found! 3");
                     enemy.spottedPlyr = true;
                     enemy.lastSpotted = new Date();
                 }
@@ -268,7 +275,7 @@ function checkSight(enemy)
              case 2:
                 if(player.x > enemy.x+enemy.w/2)
                 {
-                    console.log("Player found! 2");
+                    //console.log("Player found! 2");
 			        enemy.spottedPlyr = true;
 			        enemy.lastSpotted = new Date();
                 } 
@@ -285,7 +292,7 @@ function checkSight(enemy)
     {
         if(enemy.spottedPlyr)
         {
-            console.log("Checking time.");
+            //console.log("Checking time.");
 
             var currTime = new Date();
 
@@ -293,4 +300,18 @@ function checkSight(enemy)
                 enemy.spottedPlyr = false;
         }
     }
+}
+
+/* */
+function attackEnemy(weapon)
+{
+    /*
+    If weapon is not a gun.
+    {
+        Check each enemy's plyrNear flag.
+        {
+        
+        }
+    }
+    */
 }

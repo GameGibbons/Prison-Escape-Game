@@ -19,9 +19,9 @@ const ALERT_BAR_GROWTH = 5;
 
 // HUD information.
 var alertLevel = 1;
-var activeKeycards = [false, false, false, false, false, false, false];
-var inventory = [{item: null, inUse: false}, 
-				 {item: null, inUse: false}	];
+//var activeKeycards = [false, false, false, false, false, false, false];
+var inventoryUI = [{item: 0, inUse: false}, 
+				 {item: 0, inUse: false}	];
 
 var itemEnum = ["gun", "knife", "nailboard"]; // The location of the items in the item image.
 
@@ -118,39 +118,39 @@ function drawInventory()
 	surface.strokeRect(INVTRY_OFFSET_X + INVTRY_SLOT_WIDTH + 5, INVTRY_OFFSET_Y, INVTRY_SLOT_WIDTH, INVTRY_SLOT_HEIGHT);
 	
 	// Inventory images.
-	if(inventory[0].inUse)
-		surface.drawImage(itemImg, INVTRY_SLOT_WIDTH * inventory[0].item, 0, INVTRY_SLOT_WIDTH, INVTRY_SLOT_HEIGHT,
-						  INVTRY_OFFSET_X, INVTRY_OFFSET_Y, INVTRY_SLOT_WIDTH, INVTRY_SLOT_HEIGHT);
+	if(inventoryUI[0].inUse && inventoryUI[0].item.img !== null)
+		surface.drawImage(inventoryUI[0].item.img, inventoryUI[0].item.x, inventoryUI[0].item.y, 32, 32,
+						  INVTRY_OFFSET_X, INVTRY_OFFSET_Y, INVTRY_SLOT_WIDTH, INVTRY_SLOT_HEIGHT); 
 						  
-	if(inventory[1].inUse)
-		surface.drawImage(itemImg, INVTRY_SLOT_WIDTH * inventory[1].item, 0, INVTRY_SLOT_WIDTH, INVTRY_SLOT_HEIGHT,
-						  INVTRY_OFFSET_X + INVTRY_SLOT_WIDTH + 5, INVTRY_OFFSET_Y, INVTRY_SLOT_WIDTH, INVTRY_SLOT_HEIGHT);
+	if(inventoryUI[1].inUse && inventoryUI[1].item.img !== null)
+		surface.drawImage(inventoryUI[1].item.img, inventoryUI[1].item.x, inventoryUI[1].item.y, 32, 32,
+						  INVTRY_OFFSET_X + INVTRY_SLOT_WIDTH + 5, INVTRY_OFFSET_Y, INVTRY_SLOT_WIDTH, INVTRY_SLOT_HEIGHT); 
 }
 
 // This function takes an index of the item enummeration and sees if there is a slot available for it.
 function equipItemP(itemToEquip)
 {
-	inventory[0].item = itemToEquip;
-		inventory[0].inUse = true;
-		Primary (itemToEquip);
+	inventoryUI[0].item = item[itemToEquip];
+	inventoryUI[0].inUse = true;
+	//Primary (itemToEquip);
 }
 
 function equipItemS(itemToEquip)
 {
-	inventory[1].item = itemToEquip;
-		inventory[1].inUse = true;
-		Secondary (itemToEquip);
+	inventoryUI[1].item = item[itemToEquip];
+	inventoryUI[1].inUse = true;
+	//Secondary (itemToEquip);
 }
 
-// This function takes an inventory slot and resets it.
+// This function takes an inventoryUI slot and resets it.
 function unequipItem(slot)
 {
-	if(!inventory[slot].inUse)
+	if(!inventoryUI[slot].inUse)
 		return;
 	else
 	{
-		inventory[slot].item = null;
-		inventory[slot].inUse = false;
+		inventoryUI[slot].item = null;
+		inventoryUI[slot].inUse = false;
 	}
 }
 
@@ -277,47 +277,44 @@ function decreaseAlert() { if(alertLevel > 1) {alertLevel -= 1;} }
 
 function drawStorageUI()
 {
-    storage.forEach(function (el)
+	var i;
+    if(storageUI.draw === true)
     {
-		var i;
-        if(el.draw === true)
-        {
-			level1Sttorage();
-            // Draw slot UI.
-            surface.drawImage(el.img,
-                              el.frameIdx * 48, 124 * el.dir, 48, 124,
-                              player.x + 45, player.y, 48, 124)
+	
+        // Draw slot UI.
+        surface.drawImage(storageUI.img,
+                          storageUI.frameIdx * 48, 124 * storageUI.dir, 48, 124,
+                          player.x + 45, player.y, 48, 124)
 
-            // Draw each item per slot.
-            for (i = 1; i < item.length; i++)
-			{	
-				if (i === s1)
-					surface.drawImage(item[i].img,
-									  item[i].x, item[i].y, 32, 32,
-									  player.x + 53, player.y + 9, 32, 32);
-				if (i === s2)
-					surface.drawImage(item[i].img,
-									  item[i].x, item[i].y, 32, 32,
-									  player.x + 53, player.y + 46, 32, 32);
-				if (i === s3)
-					surface.drawImage(item[i].img,
-									  item[i].x, item[i].y, 32, 32,
-									  player.x + 53, player.y + 83, 32, 32);
-			}
+        // Draw each item per slot.
+        for (i = 1; i < item.length; i++)
+		{	
+			if (i === currItemTile.s1)
+				surface.drawImage(item[i].img,
+								  item[i].x, item[i].y, 32, 32,
+								  player.x + 53, player.y + 9, 32, 32);
+			if (i === currItemTile.s2)
+				surface.drawImage(item[i].img,
+								  item[i].x, item[i].y, 32, 32,
+								  player.x + 53, player.y + 46, 32, 32);
+			if (i === currItemTile.s3)
+				surface.drawImage(item[i].img,
+								  item[i].x, item[i].y, 32, 32,
+								  player.x + 53, player.y + 83, 32, 32);
+		}
 
-            // Draw selection cursor.
-            if (Icursor.slot === 0)
-                surface.drawImage(Icursor.img,
-                                  Icursor.x, Icursor.y, 32, 32,
-                                  player.x + 53, player.y + 9, 32, 32);
-            if (Icursor.slot === 1)
-                surface.drawImage(Icursor.img,
-                                  Icursor.x, Icursor.y, 32, 32,
-                                  player.x + 53, player.y + 46, 32, 32);
-            if (Icursor.slot === 2)
-                surface.drawImage(Icursor.img,
-                                  Icursor.x, Icursor.y, 32, 32,
-                                  player.x + 53, player.y + 83, 32, 32);
-        }
-    });
+        // Draw selection cursor.
+        if (Icursor.slot === 0)
+            surface.drawImage(Icursor.img,
+                              Icursor.x, Icursor.y, 32, 32,
+                              player.x + 53, player.y + 9, 32, 32);
+        if (Icursor.slot === 1)
+            surface.drawImage(Icursor.img,
+                              Icursor.x, Icursor.y, 32, 32,
+                              player.x + 53, player.y + 46, 32, 32);
+        if (Icursor.slot === 2)
+            surface.drawImage(Icursor.img,
+                              Icursor.x, Icursor.y, 32, 32,
+                              player.x + 53, player.y + 83, 32, 32);
+    }
 }

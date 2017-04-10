@@ -17,9 +17,11 @@ var images = [new Image(), new Image()];
 images[0].src = "img/player_img/Prisoner.png";
 images[1].src = "img/player_img/Guard.png";
 
+var activeKeycards = [false, false, false, false, false, false, false];
+
 var player = {img:null, x:496, y:384, w:30, h:38, dir:0, speed:4, idle:true, // for dir 0=down, 1=up, 2=right, 3=left
 left:null, right:null, top:null, bottom:null, 
-colL:false, colR:false, colT:false, colB:false}; 
+colL:false, colR:false, colT:false, colB:false, inventory:[0, 0]}; 
 
 var frameIndex = 0; 	// Index of the sprite to display via drawImage.
 var currentFrame = 0; 	// Counter for the frames.
@@ -128,21 +130,21 @@ function handleInput()
 			EPressed = false;
 		}
 	})
-	storage.forEach(function(el){
-		if (ItemWindow == 1) {
-			if (el.state === 2) {
-				el.idle = false;
-				el.state = 1;
-				el.draw = true;
-			}
+
+    if (ItemWindow == 1) {
+		if (storageUI.state === 2) {
+			storageUI.idle = false;
+			storageUI.state = 1;
+			storageUI.draw = true;
 		}
-		else{
-			if (el.state === 1) {
-				el.idle = false;
-				el.state = 2;
-			}
+	}
+	else{
+		if (storageUI.state === 1) {
+			storageUI.idle = false;
+			storageUI.state = 2;
 		}
-	})
+	}
+
 	if (ItemWindow == 0){
 		if (downPressed == true){
 			player.dir = 0;
@@ -188,23 +190,25 @@ function handleInput()
 			upPressed = false;
 		}
 		else if (FPressed == true){
-			console.log("Equipped Primary")
+			/*console.log("Equipped Primary")
 			if (Icursor.slot == 0)
-				equipItemP(itemEnum.indexOf("nailboard"));
+				equipItemP(currItemTile.s1);
 			else if (Icursor.slot == 1)
-				equipItemP(itemEnum.indexOf("knife"));
+				equipItemP(currItemTile.s2);
 			else if (Icursor.slot == 2)
-				equipItemP(itemEnum.indexOf("gun"));
+				equipItemP(currItemTile.s3);*/
+            equipPrimary();
 			FPressed = false;
 		}
 		else if (GPressed == true){
-			console.log("Equipped Secondary")
+			/*console.log("Equipped Secondary")
 			if (Icursor.slot == 0)
-				equipItemS(itemEnum.indexOf("nailboard"));
+				equipItemS(currItemTile.s1);
 			else if (Icursor.slot == 1)
-				equipItemS(itemEnum.indexOf("knife"));
+				equipItemS(currItemTile.s2);
 			else if (Icursor.slot == 2)
-				equipItemS(itemEnum.indexOf("gun"));
+				equipItemS(currItemTile.s3);*/
+            equipSecondary();
 			GPressed = false;
 		}
 	}
@@ -261,4 +265,176 @@ function animatePlayer()
 		if (frameIndex == 2)
 			frameIndex = 0;
 	}
+}
+
+function equipPrimary()
+{
+    /*
+    Create a temporary variable to store the player's current primary item(currPrimary).
+    
+    If the Icursor slot is equal to zero.
+    {
+        Set the player inventory at index 0 to the integer of the currItemTile.s1.
+        Set the currItemTile.s1 to currPrimary.
+        Call equipItemP and pass the new primary item.
+    }
+    Else, if the Icursor slot is equal to one.
+    {
+        Set the player inventory at index 0 to the integer of the currItemTile.s2.
+        Set the currItemTile.s2 to currPrimary.
+        Call equipItemP and pass the new primary item.
+    }
+    Else, if the Icursor slot is equal to two.
+    {
+        Set the player inventory at index 0 to the integer of the currItemTile.s3.
+        Set the currItemTile.s3 to currPrimary.
+        Call equipItemP and pass the new primary item.
+    }
+    */
+
+    var currPrimary;
+
+    switch(Icursor.slot)
+    {
+        case 0:
+            // If there isn't a keycard in the slot.
+            if(currItemTile.s1 < 10 || currItemTile.s1 > 16)
+            {
+                currPrimary = player.inventory[0];
+                player.inventory[0] = currItemTile.s1;
+                currItemTile.s1 = currPrimary;
+                equipItemP(player.inventory[0]);
+            }
+            // Set the keycard to true in activeKeycards and set the slot to zero.
+            else
+            {
+                activeKeycards[currItemTile.s1 - 10] = true;
+                currItemTile.s1 = 0;
+            }
+            break;
+        case 1:
+            if(currItemTile.s2 < 10 || currItemTile.s2 > 16)
+            {
+                currPrimary = player.inventory[0];
+                player.inventory[0] = currItemTile.s2;
+                currItemTile.s2 = currPrimary;
+                equipItemP(player.inventory[0]);
+            }
+            else
+            {
+                activeKeycards[currItemTile.s2 - 10] = true;
+                currItemTile.s2 = 0;
+            }
+            break;
+        case 2:
+            if(currItemTile.s3 < 10 || currItemTile.s3 > 16)
+            {
+                currPrimary = player.inventory[0];
+                player.inventory[0] = currItemTile.s3;
+                currItemTile.s3 = currPrimary;
+                equipItemP(player.inventory[0]);
+            }
+            else
+            {
+                activeKeycards[currItemTile.s3 - 10] = true;
+                currItemTile.s3 = 0;
+            }
+            break;
+    }
+    // Set the storage object in the item tracking array to the current storage objects slot values.
+    itemTracking[currItemTile.trackIdx].s1 = currItemTile.s1;
+    itemTracking[currItemTile.trackIdx].s2 = currItemTile.s2;
+    itemTracking[currItemTile.trackIdx].s3 = currItemTile.s3;
+}
+
+function equipSecondary(itemToEquip)
+{
+    /*
+    Create a temporary variable to store the player's current secondary item(currSecondary).
+    
+    If the Icursor slot is equal to zero.
+    {
+        Set the player inventory at index 1 to the integer of the currItemTile.s1.
+        Set the currItemTile.s1 to currSecondary.
+        Call equipItemP and pass the new secondary item.
+    }
+    Else, if the Icursor slot is equal to one.
+    {
+        Set the player inventory at index 1 to the integer of the currItemTile.s2.
+        Set the currItemTile.s2 to currSecondary.
+        Call equipItemP and pass the new secondary item.
+    }
+    Else, if the Icursor slot is equal to two.
+    {
+        Set the player inventory at index 1 to the integer of the currItemTile.s3.
+        Set the currItemTile.s3 to currSecondary.
+        Call equipItemP and pass the new secondary item.
+    }
+    */
+
+    var currSecondary;
+
+    switch(Icursor.slot)
+    {
+        case 0:
+            if(currItemTile.s1 < 10 || currItemTile.s1 > 16)
+            {
+                currSecondary = player.inventory[1];
+                player.inventory[1] = currItemTile.s1;
+                currItemTile.s1 = currSecondary;
+                equipItemS(player.inventory[1]);
+            }
+            else
+            {
+                activeKeycards[currItemTile.s1 - 10] = true;
+                currItemTile.s1 = 0;
+            }
+            break;
+        case 1:
+            if(currItemTile.s2 < 10 || currItemTile.s2 > 16)
+            {
+                currSecondary = player.inventory[1];
+                player.inventory[1] = currItemTile.s2;
+                currItemTile.s2 = currSecondary;
+                equipItemS(player.inventory[1]);
+            }
+            else
+            {
+                activeKeycards[currItemTile.s2 - 10] = true;
+                currItemTile.s2 = 0;
+            }
+            break;
+        case 2:
+            if(currItemTile.s3 < 10 || currItemTile.s3 > 16)
+            {
+                currSecondary = player.inventory[1];
+                player.inventory[1] = currItemTile.s3;
+                currItemTile.s3 = currSecondary;
+                equipItemS(player.inventory[1]);
+            }
+            else
+            {
+                activeKeycards[currItemTile.s3 - 10] = true;
+                currItemTile.s3 = 0;
+            }
+            break;
+    }
+    // Set the storage object in the item tracking array to the current storage objects slot values.
+    itemTracking[currItemTile.trackIdx].s1 = currItemTile.s1;
+    itemTracking[currItemTile.trackIdx].s2 = currItemTile.s2;
+    itemTracking[currItemTile.trackIdx].s3 = currItemTile.s3;
+}
+
+// Helper function for setting keycards.
+function setKeycard(item)
+{
+    switch(item)
+    {
+        case 10:
+            activeKeycards[0] = true;
+            break;
+        case 11:
+            activeKeycards[1] = true;
+            break;
+    }
 }

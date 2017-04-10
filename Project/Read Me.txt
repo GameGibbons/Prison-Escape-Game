@@ -1,11 +1,10 @@
-Unnamed Alpha Ver 0.5.3A
+Unnamed Alpha Ver 0.5.5A
 
 Change(s):
-+ Added new item management system
-+ Added new item images
-- Removed proxy art
-~ Fixed collisions
-~ Fixed enemy LOS
++ Added enemy collisions
++ Added player strike distance check
+~ Fixed item images
+~ Fixed item management system to remember where items are being stored
 
 Known bug(s):
-! Door animations may spaz out when entering new room.
+! Door animations may spaz out when entering new room

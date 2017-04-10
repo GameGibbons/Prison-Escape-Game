@@ -169,8 +169,7 @@ door[15] = { img: tileSet[4], dir:3, idle:true, state:2, frameIndexDoor:0, lock:
 door[16] = { img: tileSet[4], dir:0, idle:true, state:2, frameIndexDoor:0, lock:false };
 door[17] = { img: tileSet[4], dir:3, idle:true, state:2, frameIndexDoor:0, lock:false };
 
-var s1, s2, s3;
-var currItemTile;
+var currItemTile; // Used to reference a storage tile that the player is near for item management and UI.
 
 //Room creation variables
 var currRoom = []; // This is the currently rendered room.
@@ -178,7 +177,7 @@ var nextRoom = []; // The room we're going into. When the map scrolls, it also h
 var colTiles = []; // An array holding the collision tiles. Only walls and doors currently.
 
 var rooms; // A three-dimensional array of the room maps.
-var startRoom = 21; // An index for the first room drawn.
+var startRoom = 0; // An index for the first room drawn.
 var roomScroll = false; // A flag for the update so it knows if we're in the scroll 'animation'
 var scrollDir = -1; // A value for the scrolling direction. 0=up, 1=down, 2=left, 3=right
 var scrollSpeed; // A value for the scrolling speed, i.e. the number of pixels the map moves per frame.
@@ -263,6 +262,8 @@ function buildRoom(roomArr, roomIdx, startLoc)
     activeEnemies = []; // Resetting the activeEnemies array for the new room.
     activeWP = []; // Resetting the activeWP array for the new room.
     losTiles = [];
+    itemTracking = [];
+    var itemTrackIdx = 0; // The index of the item tile in the item tracking array.
 
 	for (var row = 0; row < ROWS; row++)
 	{
@@ -369,10 +370,11 @@ function buildRoom(roomArr, roomIdx, startLoc)
 			                img: enemyImg, x: tempTile.x, y: tempTile.y, w: ENEMY_WIDTH, h: ENEMY_HEIGHT,
 			                speed: ENEMY_DEFAULT_SPEED, dx: 0, dy: 0, currWP: tempIdx.currWP, range: ENEMY_RANGE, firing: false, fireCtr: 0,
 			                frameCtr: 0, frameIdx: 0, maxFrames: 4, waypoint: tempIdx.wpIdx, dir: 0, spottedPlyr: false, lastSpotted: null,
-                            isStunned: false, isDead: false, target: {x: this.x, y: this.y }, linecast: null
+                            isStunned: false, isDead: false, isEnemy: true, linecast: null, collider: {x:this.x, y:this.y, w:ENEMY_WIDTH, h:ENEMY_HEIGHT}
 			            };
 
 			            activeEnemies.push(enemy);
+                        colTiles.push(enemy);
 			            break;
 			        case "wp": // Waypoint.
 			            tempTile.img = tileImages[0];
@@ -392,15 +394,16 @@ function buildRoom(roomArr, roomIdx, startLoc)
 			                activeWP[tempIdx.wpIdx].push(tempWP);
 			            break;
 					case "st": // Storage.
-						if (typeof tempIdx.n !== "undefined") 
-						{
-							tempTile.img = tileImages[tempIdx.t];
-							setIntTiles(tempIdx.t, tempTile);
-							tempTile.n = tempIdx.n;
-							tempTile.s1 = tempIdx.s1;
-							tempTile.s2 = tempIdx.s2;
-							tempTile.s3 = tempIdx.s3;
-						}
+						setIntTiles(tempIdx.t, tempTile);
+						tempTile.s1 = tempIdx.s1;
+						tempTile.s2 = tempIdx.s2;
+						tempTile.s3 = tempIdx.s3;
+
+                        // Give the tile an index property and push it to the item tracking array.
+                        tempTile.trackIdx = itemTrackIdx;
+                        itemTrackIdx++;
+                        itemTracking.push(rooms[roomIdx][row][col]);
+                        break;
 			        default:
 			            console.log("Rooms tile object is not recognized. Did you assign the correct ID?");
 			            break;
@@ -412,8 +415,7 @@ function buildRoom(roomArr, roomIdx, startLoc)
                 setIntTiles(tempIdx, tempTile);
             }
 
-			if (tempIdx !== 0 && tempIdx !== 1 && tempIdx !== 8 && tempIdx !== 9 && tempIdx !== 10 && tempIdx !== 11 && tempIdx.ID !== 'enmy'
-                && tempIdx.ID !== 'wp')
+			if (tempIdx !== 0 && tempIdx !== 1 && tempIdx !== 8 && tempIdx !== 9 && tempIdx !== 10 && tempIdx !== 11 && tempIdx.ID !== 'wp' && tempIdx.ID !== 'enmy')
             {
 			    colTiles.push(tempTile);
                 losTiles.push(tempTile);
@@ -653,7 +655,7 @@ function animate()
 	animatePlayer();
 	animateDoor();
 	animateEnemies();
-	animateStorage();
+	animateStorageUI();
 }
 
 function animateDoor()
