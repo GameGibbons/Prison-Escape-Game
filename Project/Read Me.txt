@@ -1,10 +1,9 @@
-Unnamed Alpha Ver 0.5.5A
+Unnamed Alpha Ver 0.5.6A
 
 Change(s):
-+ Added enemy collisions
-+ Added player strike distance check
-~ Fixed item images
-~ Fixed item management system to remember where items are being stored
++ Added additional item information for item use
++ Added a way for the item management system to remember item uses throughout
+a level
 
 Known bug(s):
 ! Door animations may spaz out when entering new room

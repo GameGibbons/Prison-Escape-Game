@@ -399,10 +399,28 @@ function buildRoom(roomArr, roomIdx, startLoc)
 						tempTile.s2 = tempIdx.s2;
 						tempTile.s3 = tempIdx.s3;
 
-                        // Give the tile an index property and push it to the item tracking array.
+                        /* Create and initialize the use properties of the tile in the rooms array, if that hasn't been done already, to the corresponding item in the item array. 
+                        Then set the current tile's use properties with that. */
+                        if(typeof tempIdx.use1 === 'undefined' && typeof tempIdx.use2 === 'undefined' && typeof tempIdx.use3 === 'undefined')
+                        {
+                            tempTile.use1 = rooms[roomIdx][row][col].use1 = item[tempIdx.s1].use;
+                            tempTile.use2 = rooms[roomIdx][row][col].use2 = item[tempIdx.s2].use;
+                            tempTile.use3 = rooms[roomIdx][row][col].use3 = item[tempIdx.s3].use;
+                        }
+                        else
+                        {
+                            // Set this tile's use properties to the use properties of the tile in the rooms array.
+                            tempTile.use1 = tempIdx.use1;
+                            tempTile.use2 = tempIdx.use2;
+                            tempTile.use3 = tempIdx.use3;
+                        }
+
+                        // Give the tile an index property and push the current tile in the rooms array to the item tracking array.
                         tempTile.trackIdx = itemTrackIdx;
                         itemTrackIdx++;
                         itemTracking.push(rooms[roomIdx][row][col]);
+
+                        console.log("Tile item use: " + rooms[roomIdx][row][col].use1 + " " + rooms[roomIdx][row][col].use2 + " " + rooms[roomIdx][row][col].use3);
                         break;
 			        default:
 			            console.log("Rooms tile object is not recognized. Did you assign the correct ID?");

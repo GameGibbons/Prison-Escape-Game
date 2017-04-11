@@ -21,7 +21,7 @@ var activeKeycards = [false, false, false, false, false, false, false];
 
 var player = {img:null, x:496, y:384, w:30, h:38, dir:0, speed:4, idle:true, // for dir 0=down, 1=up, 2=right, 3=left
 left:null, right:null, top:null, bottom:null, 
-colL:false, colR:false, colT:false, colB:false, inventory:[0, 0]}; 
+colL:false, colR:false, colT:false, colB:false, inventory:[0, 0], itemUse:[0, 0]}; 
 
 var frameIndex = 0; 	// Index of the sprite to display via drawImage.
 var currentFrame = 0; 	// Counter for the frames.
@@ -162,12 +162,26 @@ function handleInput()
 			player.dir = 3;
 			player.idle = false;
 		}
-		else if (FPressed == true){
-			console.log("pew");
+		else if (FPressed == true){ // Primary weapon used.
+            // Only decrement if the itemUse is greater than zero.
+            if(player.itemUse[0] > 0){player.itemUse[0]--;}
+
+            // Set the primary inventory to zero once itemUse is depleted.
+            if(player.itemUse[0] === 0) {player.inventory[0] = 0;}
+
+			console.log("Primary use: " + player.itemUse[0]);
+
 			FPressed = false;
 		}
-		else if (GPressed == true){
-			console.log("stab");
+		else if (GPressed == true){ // Secondary weapon used.
+            // Only decrement if the itemUse is greater than zero.
+			if(player.itemUse[1] > 0) {player.itemUse[1]--;}
+
+            // Set the secondary inventory to zero once itemUse is depleted. 
+            if(player.itemUse[1] === 0) {player.inventory[1] = 0;}
+
+            console.log("Secondary use: " + player.itemUse[1]);
+
 			GPressed = false;
 		}
 		else{
@@ -190,24 +204,10 @@ function handleInput()
 			upPressed = false;
 		}
 		else if (FPressed == true){
-			/*console.log("Equipped Primary")
-			if (Icursor.slot == 0)
-				equipItemP(currItemTile.s1);
-			else if (Icursor.slot == 1)
-				equipItemP(currItemTile.s2);
-			else if (Icursor.slot == 2)
-				equipItemP(currItemTile.s3);*/
             equipPrimary();
 			FPressed = false;
 		}
 		else if (GPressed == true){
-			/*console.log("Equipped Secondary")
-			if (Icursor.slot == 0)
-				equipItemS(currItemTile.s1);
-			else if (Icursor.slot == 1)
-				equipItemS(currItemTile.s2);
-			else if (Icursor.slot == 2)
-				equipItemS(currItemTile.s3);*/
             equipSecondary();
 			GPressed = false;
 		}
@@ -253,6 +253,10 @@ function movePlayer()
 			//console.log("e is "+el.n);
 		}
 	})
+
+    // Update inventory UI element.
+    equipItemP(player.inventory[0]);
+    equipItemS(player.inventory[1]);
 }
 
 function animatePlayer()
@@ -269,30 +273,8 @@ function animatePlayer()
 
 function equipPrimary()
 {
-    /*
-    Create a temporary variable to store the player's current primary item(currPrimary).
-    
-    If the Icursor slot is equal to zero.
-    {
-        Set the player inventory at index 0 to the integer of the currItemTile.s1.
-        Set the currItemTile.s1 to currPrimary.
-        Call equipItemP and pass the new primary item.
-    }
-    Else, if the Icursor slot is equal to one.
-    {
-        Set the player inventory at index 0 to the integer of the currItemTile.s2.
-        Set the currItemTile.s2 to currPrimary.
-        Call equipItemP and pass the new primary item.
-    }
-    Else, if the Icursor slot is equal to two.
-    {
-        Set the player inventory at index 0 to the integer of the currItemTile.s3.
-        Set the currItemTile.s3 to currPrimary.
-        Call equipItemP and pass the new primary item.
-    }
-    */
-
-    var currPrimary;
+    var currPrimary = player.inventory[0];
+    var currUse = player.itemUse[0];
 
     switch(Icursor.slot)
     {
@@ -300,10 +282,13 @@ function equipPrimary()
             // If there isn't a keycard in the slot.
             if(currItemTile.s1 < 10 || currItemTile.s1 > 16)
             {
-                currPrimary = player.inventory[0];
+                // Swap item.
                 player.inventory[0] = currItemTile.s1;
                 currItemTile.s1 = currPrimary;
-                equipItemP(player.inventory[0]);
+
+                // Swap item's use.
+                player.itemUse[0] = currItemTile.use1;
+                currItemTile.use1 = currUse;
             }
             // Set the keycard to true in activeKeycards and set the slot to zero.
             else
@@ -315,10 +300,11 @@ function equipPrimary()
         case 1:
             if(currItemTile.s2 < 10 || currItemTile.s2 > 16)
             {
-                currPrimary = player.inventory[0];
                 player.inventory[0] = currItemTile.s2;
                 currItemTile.s2 = currPrimary;
-                equipItemP(player.inventory[0]);
+
+                player.itemUse[0] = currItemTile.use2;
+                currItemTile.use2 = currUse;
             }
             else
             {
@@ -329,10 +315,11 @@ function equipPrimary()
         case 2:
             if(currItemTile.s3 < 10 || currItemTile.s3 > 16)
             {
-                currPrimary = player.inventory[0];
                 player.inventory[0] = currItemTile.s3;
                 currItemTile.s3 = currPrimary;
-                equipItemP(player.inventory[0]);
+
+                player.itemUse[0] = currItemTile.use3;
+                currItemTile.use3 = currUse;
             }
             else
             {
@@ -341,50 +328,38 @@ function equipPrimary()
             }
             break;
     }
-    // Set the storage object in the item tracking array to the current storage objects slot values.
+    // Set the storage object in the item tracking array to the current storage objects slot & use values.
     itemTracking[currItemTile.trackIdx].s1 = currItemTile.s1;
     itemTracking[currItemTile.trackIdx].s2 = currItemTile.s2;
     itemTracking[currItemTile.trackIdx].s3 = currItemTile.s3;
+    itemTracking[currItemTile.trackIdx].use1 = currItemTile.use1;
+    itemTracking[currItemTile.trackIdx].use2 = currItemTile.use2;
+    itemTracking[currItemTile.trackIdx].use3 = currItemTile.use3;
+
+    console.log("Current item tile use: " + currItemTile.use1 + " " + currItemTile.use2 + " " + currItemTile.use3);
 }
 
 function equipSecondary(itemToEquip)
 {
-    /*
-    Create a temporary variable to store the player's current secondary item(currSecondary).
-    
-    If the Icursor slot is equal to zero.
-    {
-        Set the player inventory at index 1 to the integer of the currItemTile.s1.
-        Set the currItemTile.s1 to currSecondary.
-        Call equipItemP and pass the new secondary item.
-    }
-    Else, if the Icursor slot is equal to one.
-    {
-        Set the player inventory at index 1 to the integer of the currItemTile.s2.
-        Set the currItemTile.s2 to currSecondary.
-        Call equipItemP and pass the new secondary item.
-    }
-    Else, if the Icursor slot is equal to two.
-    {
-        Set the player inventory at index 1 to the integer of the currItemTile.s3.
-        Set the currItemTile.s3 to currSecondary.
-        Call equipItemP and pass the new secondary item.
-    }
-    */
-
-    var currSecondary;
+    var currSecondary = player.inventory[1];
+    var currUse = player.itemUse[1];
 
     switch(Icursor.slot)
     {
         case 0:
+            // If there isn't a keycard in the slot.
             if(currItemTile.s1 < 10 || currItemTile.s1 > 16)
             {
-                currSecondary = player.inventory[1];
+                // Swap item.
                 player.inventory[1] = currItemTile.s1;
                 currItemTile.s1 = currSecondary;
-                equipItemS(player.inventory[1]);
+
+                // Swap item use.
+                player.itemUse[1] = currItemTile.use1;
+                currItemTile.use1 = currUse;
             }
-            else
+            // Set the keycard to true in activeKeycards and set the slot to zero.
+            else 
             {
                 activeKeycards[currItemTile.s1 - 10] = true;
                 currItemTile.s1 = 0;
@@ -393,10 +368,11 @@ function equipSecondary(itemToEquip)
         case 1:
             if(currItemTile.s2 < 10 || currItemTile.s2 > 16)
             {
-                currSecondary = player.inventory[1];
                 player.inventory[1] = currItemTile.s2;
                 currItemTile.s2 = currSecondary;
-                equipItemS(player.inventory[1]);
+
+                player.itemUse[1] = currItemTile.use2;
+                currItemTile.use2 = currUse;
             }
             else
             {
@@ -407,10 +383,11 @@ function equipSecondary(itemToEquip)
         case 2:
             if(currItemTile.s3 < 10 || currItemTile.s3 > 16)
             {
-                currSecondary = player.inventory[1];
                 player.inventory[1] = currItemTile.s3;
                 currItemTile.s3 = currSecondary;
-                equipItemS(player.inventory[1]);
+
+                player.itemUse[1] = currItemTile.use3;
+                currItemTile.use3 = currUse;
             }
             else
             {
@@ -419,22 +396,14 @@ function equipSecondary(itemToEquip)
             }
             break;
     }
-    // Set the storage object in the item tracking array to the current storage objects slot values.
+    // Set the storage object in the item tracking array to the current storage objects slot & use values.
     itemTracking[currItemTile.trackIdx].s1 = currItemTile.s1;
     itemTracking[currItemTile.trackIdx].s2 = currItemTile.s2;
     itemTracking[currItemTile.trackIdx].s3 = currItemTile.s3;
+    itemTracking[currItemTile.trackIdx].use1 = currItemTile.use1;
+    itemTracking[currItemTile.trackIdx].use2 = currItemTile.use2;
+    itemTracking[currItemTile.trackIdx].use3 = currItemTile.use3;
+
+    console.log("Current item tile use: " + currItemTile.use1 + " " + currItemTile.use2 + " " + currItemTile.use3);
 }
 
-// Helper function for setting keycards.
-function setKeycard(item)
-{
-    switch(item)
-    {
-        case 10:
-            activeKeycards[0] = true;
-            break;
-        case 11:
-            activeKeycards[1] = true;
-            break;
-    }
-}
