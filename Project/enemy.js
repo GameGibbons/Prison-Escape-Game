@@ -5,9 +5,10 @@
 // Constants.
 const ENEMY_WIDTH = 30;
 const ENEMY_HEIGHT = 38;
-const ENEMY_DEFAULT_SPEED = 4;
+const ENEMY_DEFAULT_SPEED = 2;
 const ENEMY_RANGE = 400;
 const ENEMY_ALERT_TIME = 3; // In seconds.
+const ENEMY_STUN_TIME = 3;
 const ENEMY_CQC_RANGE = 50;
 
 var activeEnemies = [];
@@ -64,16 +65,38 @@ function updateEnemies(scrollDir, scrollSpeed)
 /* Reduces the distance between the enemy and the current waypoint each frame. */
 function moveEnemies()
 {
-    activeEnemies.forEach(function(el)
+    activeEnemies.forEach(function(el, index)
     {
+        if (el.isDead)
+        {
+            // Remove this enemy from both activeEnemies and colTiles arrays. 
+            activeEnemies.splice(index, 1);
+
+            for (var i = 0; i < colTiles.length; i++)
+            {
+                if (colTiles[i].isEnemy && colTiles[i].isDead)
+                    colTiles.splice(i, 1);
+            }
+
+            // Nothing more to do with this enemy.
+            return;
+        }
+
         // Move enemy.
-        if(!el.spottedPlyr)
+        if(!el.spottedPlyr && !el.isStunned)
         {
             el.x += el.dx;
             el.y += el.dy;
 
             el.collider.x = el.x;
             el.collider.y = el.y;
+        }
+
+        if (el.isStunned)
+        {
+            var currTime = new Date();
+            if ((currTime.getSeconds() - el.lastStunned.getSeconds()) >= ENEMY_STUN_TIME)
+                el.isStunned = false;
         }
 
         /* Check what direction this enemy is moving in and set the enemy's direction and 
@@ -91,18 +114,50 @@ function moveEnemies()
         {
             el.x = el.waypoint[el.currWP].x; 
             el.y = el.waypoint[el.currWP].y;
-            el.currWP++; 
-            if (el.currWP === el.waypoint.length) el.currWP = 0;
+
+            // Increment current waypoint if this enemy does not back-track.
+            if (el.reversePath !== true) {
+                el.currWP++;
+
+                if (el.currWP === el.waypoint.length) el.currWP = 0;
+            }
+
+            // Set reverse property based on current waypoint.
+            if (el.reversePath)
+            {
+                if(!el.reverse)
+                {
+                    el.currWP++;
+
+                    if (el.currWP === el.waypoint.length - 1) {
+                        el.reverse = true;
+                        el.currWP = el.waypoint.length - 1;
+                    }
+                }
+                else
+                {
+                    // Check if waypoint is equal to zero before moving on to decrementing.
+                    if (el.currWP === 0) {
+                        el.reverse = false;
+                        el.currWP = 1;
+                    }
+                    else
+                        el.currWP--;
+                }
+            }
+
             calcDeltas(el);
         }
 
         // Check if the player is within sriking distance and set the plyrNear flag.
-        if(calcDistance(player.x, el.x, player.y, el.y) <= ENEMY_CQC_RANGE)
+        if(calcDistance((el.x+el.w/2), (player.x+player.w/2), (el.y+el.h/2), (player.y+player.h/2)) <= ENEMY_CQC_RANGE)
             el.plyrNear = true;
         else
             el.plyrNear = false;
 
-        checkSight(el);
+        // Check sight only if not stunned.
+        if(!el.isStunned)
+            checkSight(el);
     })
 }
 
@@ -283,9 +338,50 @@ function checkSight(enemy)
             }
               
             
+            if(enemy.spottedPlyr)
+            {
+				if(enemy.firing === false)
+				{
+					enemy.firing = true;
+					enemy.fireCtr = 0;
+					
+					var tempBullet = {
+					    img: bulletImg, x: (enemy.x + enemy.w / 2), y: (enemy.y + enemy.h / 2), dx: 0,
+					    dy: 0, speed: BULLET_SPEED, isEnemys: true
+					};
+					var mag = Math.sqrt(dx*dx + dy*dy);
+					tempBullet.dx = dx/mag * tempBullet.speed;
+					tempBullet.dy = dy/mag * tempBullet.speed;
 
-            // Add firing here.
+					/*if (enemy.dir === 0)
+					{
+					    tempBullet.img = itemAnim[5];
+					}
+					else if(enemy.dir === 1)
+					{
+					    tempBullet.img = itemAnim[5];
+					}
+					else if (enemy.dir === 2)
+					{
+					    tempBullet.img = itemAnim[4];
+					}
+					else if (enemy.dir === 3)
+					{
+					    tempBullet.img = itemAnim[4];
+					}*/
 
+					bullets.push(tempBullet);
+				}
+				else
+				{
+					enemy.fireCtr++
+					if(enemy.fireCtr >= enemy.fireMax)
+					{
+						enemy.fireCtr = 0;
+						enemy.firing = false;
+					}
+				}
+            }
         }
     }
     else
@@ -296,22 +392,69 @@ function checkSight(enemy)
 
             var currTime = new Date();
 
-            if((currTime.getSeconds() - enemy.lastSpotted.getSeconds()) >= ENEMY_ALERT_TIME)
+            if ((currTime.getSeconds() - enemy.lastSpotted.getSeconds()) >= ENEMY_ALERT_TIME) {
                 enemy.spottedPlyr = false;
+                enemy.firing = true; // Set to delay again when player is spotted. 
+            }
         }
     }
 }
 
-/* */
+/* Checks each enemy to see if the player is close enough to attack one of them and then applies the attack to that enemy. */
 function attackEnemy(weapon)
 {
     /*
-    If weapon is not a gun.
+    Create attackApplied boolean to determine what boolean to return and set it to false. 
+
+    For each enemy.
     {
-        Check each enemy's plyrNear flag.
+        If this enemy's plyrNear flag is true.
         {
-        
+            If the item's effect is stun.
+            {
+                Set this enemy's isStunned flag to true. 
+                Set attackApplied to true.
+            }
+            Else, if the item's effect is kill.
+            {
+                Set this enemy's isDead flag to true.
+                Set attackApplied to true.
+            }
         }
     }
+
+    Return attackApplied.
     */
+    var attackApplied = false;
+
+	activeEnemies.forEach(function (el)
+	{
+	    //console.log(el.plyrNear);
+		if(el.plyrNear === true)
+		{
+			if(item[weapon].effect === "stun")
+			{
+			    el.isStunned = true;
+			    el.lastStunned = new Date();
+				attackApplied = true;
+			}
+			else if(item[weapon].effect === "kill")
+			{
+				el.isDead = true;
+				attackApplied = true;
+			}
+		}
+	})
+	
+	return attackApplied;
+}
+
+// Alerts all enemies.
+function alertEnemies()
+{
+    activeEnemies.forEach(function (el)
+    {
+        el.spottedPlyr = true;
+        el.lastSpotted = new Date();
+    })
 }

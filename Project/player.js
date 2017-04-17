@@ -2,6 +2,8 @@
 // Player Script. Proccesses and handles player-related data.
 //============================================================
 
+const FIRE_DELAY = 30;
+
 var CharSkin = 0;
 var ItemWindow = 0;
 var shiftPressed = false;
@@ -19,9 +21,10 @@ images[1].src = "img/player_img/Guard.png";
 
 var activeKeycards = [false, false, false, false, false, false, false];
 
-var player = {img:null, x:496, y:384, w:30, h:38, dir:0, speed:4, idle:true, // for dir 0=down, 1=up, 2=right, 3=left
+var player = {img:null, x:496, y:384, w:30, h:38, dir:0, speed:6, idle:true, // for dir 0=down, 1=up, 2=right, 3=left
 left:null, right:null, top:null, bottom:null, 
-colL:false, colR:false, colT:false, colB:false, inventory:[0, 0], itemUse:[0, 0]}; 
+colL: false, colR: false, colT: false, colB: false, inventory: [0, 0], itemUse: [0, 0],
+firing: false, fireCtr: 0, fireMax:15, lastFired:null, isDead:false };
 
 var frameIndex = 0; 	// Index of the sprite to display via drawImage.
 var currentFrame = 0; 	// Counter for the frames.
@@ -35,8 +38,8 @@ function onKeyDown(event)
 	switch(event.keyCode)
 	{
 		case 16: //Shift
-			if (shiftPressed == false)
-				shiftPressed = true;
+			//if (shiftPressed == false)
+				//shiftPressed = true;
 			break;
 		case 38: // Up //87
 			if (upPressed == false)
@@ -64,15 +67,16 @@ function onKeyDown(event)
 			break;
 		case 70: // F
 			if (FPressed == false)
-				FPressed = true;
+			    FPressed = true;
 			break
 		case 71: // G
 			if (GPressed == false)
-				GPressed = true;
+			    GPressed = true;
 			break
 	}
 }
 
+/* Key handling for using items moved here to get more accurate reading of input. */
 function onKeyUp(event)
 {
 	switch(event.keyCode)
@@ -99,10 +103,34 @@ function onKeyUp(event)
 			EPressed = false;
 			break;
 		case 70:
-			FPressed = false;
+		    FPressed = false;
+
+		    if (ItemWindow === 0) {
+		        if (item[player.inventory[0]].type === "cqc") {
+		            if (attackEnemy(player.inventory[0]) === true) { decreasePrimaryUse(); }
+		        }
+		        else if (item[player.inventory[0]].type === "projectile") {
+		            if (playerFire() === true) {
+		                decreasePrimaryUse();
+		                alertEnemies();
+		            }
+		        }
+		    }
 			break;
 		case 71:
-			GPressed = false;
+		    GPressed = false;
+
+		    if (ItemWindow === 0) {
+		        if (item[player.inventory[1]].type === "cqc") {
+		            if (attackEnemy(player.inventory[1]) === true) { decreaseSecondaryUse(); }
+		        }
+		        else if (item[player.inventory[1]].type === "projectile") {
+		            if (playerFire() === true) {
+		                decreaseSecondaryUse();
+		                alertEnemies();
+		            }
+		        }
+		    }
 			break;
 	}
 }
@@ -117,7 +145,7 @@ function handleInput()
 	if (shiftPressed == true)
 		player.speed = 8;
 	else if (shiftPressed == false)
-		player.speed = 4;
+		player.speed = 6;
 
 	itemTiles.forEach(function(el){
 		if (EPressed == true && el.playerAt == true)
@@ -163,24 +191,28 @@ function handleInput()
 			player.idle = false;
 		}
 		else if (FPressed == true){ // Primary weapon used.
-            // Only decrement if the itemUse is greater than zero.
-            if(player.itemUse[0] > 0){player.itemUse[0]--;}
-
-            // Set the primary inventory to zero once itemUse is depleted.
-            if(player.itemUse[0] === 0) {player.inventory[0] = 0;}
-
-			console.log("Primary use: " + player.itemUse[0]);
+            /* If an enemy was attacked, decrease primary item use.
+		    if (item[player.inventory[0]].type === "cqc") {
+		        if (attackEnemy(player.inventory[0]) === true) { decreasePrimaryUse(); }
+		    }
+		    else if(item[player.inventory[0]].type === "projectile"){
+		        if(playerFire() === true)
+		            decreasePrimaryUse();
+		    }
+			//console.log("Primary use: " + player.itemUse[0]); */
 
 			FPressed = false;
 		}
 		else if (GPressed == true){ // Secondary weapon used.
-            // Only decrement if the itemUse is greater than zero.
-			if(player.itemUse[1] > 0) {player.itemUse[1]--;}
-
-            // Set the secondary inventory to zero once itemUse is depleted. 
-            if(player.itemUse[1] === 0) {player.inventory[1] = 0;}
-
-            console.log("Secondary use: " + player.itemUse[1]);
+            /* If an enemy was attacked, decrease secondary item use.
+		    if (item[player.inventory[1]].type === "cqc") {
+		        if (attackEnemy(player.inventory[1]) === true) { decreaseSecondaryUse(); }
+		    }
+		    else if(item[player.inventory[1]].type === "projectile"){
+		        if(playerFire() === true)
+		            decreaseSecondaryUse();
+		    }
+            //console.log("Secondary use: " + player.itemUse[1]); */
 
 			GPressed = false;
 		}
@@ -231,6 +263,10 @@ function handleInput()
    or if movements has been stopped by a wall segment. */
 function movePlayer()
 {
+    // Change to game over if player is dead.
+    if (player.isDead)
+        changeState(5);
+
     if(ItemWindow==0)
     {
 		if (leftPressed == true && player.colL == false) // Here is where we use the collision flags.
@@ -250,7 +286,6 @@ function movePlayer()
 		if (!(player.x > el.x + el.w || player.x + player.w < el.x || player.y > el.y + el.h || player.y + player.h < el.y)){
 		    el.playerAt = true;
 			currItemTile = el;
-			//console.log("e is "+el.n);
 		}
 	})
 
@@ -336,7 +371,7 @@ function equipPrimary()
     itemTracking[currItemTile.trackIdx].use2 = currItemTile.use2;
     itemTracking[currItemTile.trackIdx].use3 = currItemTile.use3;
 
-    console.log("Current item tile use: " + currItemTile.use1 + " " + currItemTile.use2 + " " + currItemTile.use3);
+    //console.log("Current item tile use: " + currItemTile.use1 + " " + currItemTile.use2 + " " + currItemTile.use3);
 }
 
 function equipSecondary(itemToEquip)
@@ -404,6 +439,61 @@ function equipSecondary(itemToEquip)
     itemTracking[currItemTile.trackIdx].use2 = currItemTile.use2;
     itemTracking[currItemTile.trackIdx].use3 = currItemTile.use3;
 
-    console.log("Current item tile use: " + currItemTile.use1 + " " + currItemTile.use2 + " " + currItemTile.use3);
+    //console.log("Current item tile use: " + currItemTile.use1 + " " + currItemTile.use2 + " " + currItemTile.use3);
 }
 
+function decreasePrimaryUse()
+{
+    // Only decrement the item use if it is greater than zero, and set the inventory slot to zero if item use is zero.
+    if (player.itemUse[0] > 0)
+        player.itemUse[0]--;
+    
+    if(player.itemUse[0] <= 0)
+        player.inventory[0] = 0;
+
+    //console.log("Primary use: " + player.itemUse[0]);
+}
+
+function decreaseSecondaryUse()
+{
+    // Only decrement the item use if it is greater than zero, and set the inventory slot to zero if item use is zero.
+    if (player.itemUse[1] > 0)
+        player.itemUse[1]--;
+
+    if (player.itemUse[1] <= 0)
+        player.inventory[1] = 0;
+
+    //console.log("Secondary use: " + player.itemUse[1]);
+}
+
+function playerFire()
+{
+    var fired = false;
+
+	    fired = true;
+	    player.lastFired = new Date();
+	    player.firing = true;
+
+		var tempBullet = {img:bulletImg, x:(player.x+player.w/2), y:(player.y+player.h/2), dx:0, dy:0, speed:BULLET_SPEED, isPlayers:true};
+		
+		if(player.dir === 0)
+		{
+			tempBullet.dy = tempBullet.speed;
+		}
+		else if(player.dir === 1)
+		{
+			tempBullet.dy = tempBullet.speed*(-1);
+		}
+		else if(player.dir === 2)
+		{
+			tempBullet.dx = tempBullet.speed;
+		}
+		else if(player.dir === 3)
+		{
+			tempBullet.dx = tempBullet.speed*(-1);
+		}
+		
+		bullets.push(tempBullet);
+
+	return fired;
+}

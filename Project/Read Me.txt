@@ -1,9 +1,10 @@
-Unnamed Alpha Ver 0.5.6A
+Unnamed Beta Ver 0.6.3B
 
 Change(s):
-+ Added additional item information for item use
-+ Added a way for the item management system to remember item uses throughout
-a level
++ Added new buttons
++ Added use count to the inventory UI
+~ Tweaked inventory & keycard HUD UI element positions
+- Removed alert HUD UI element 
 
 Known bug(s):
 ! Door animations may spaz out when entering new room

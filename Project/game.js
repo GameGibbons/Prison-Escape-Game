@@ -4,16 +4,23 @@
 
 /* states is an array of objects where each object is a state with an enter, update and exit function. These
    functions get called in the changeState function. */
-var states = [{enter: enterMenu, update: updateMenu, exit: exitMenu}, 	// Main menu state.
-			  {enter: enterGame, update: updateGame, exit: exitGame}, 	// Game state.
-			  { enter: enterHelp, update: updateHelp, exit: exitHelp }] 	// Help state.
+var states = [{ enter: enterMenu, update: updateMenu, exit: exitMenu }, 	// Main menu state.
+			  { enter: enterGame, update: updateGame, exit: exitGame }, 	// Game state.
+			  { enter: enterHelp, update: updateHelp, exit: exitHelp }, 	// Help state.
+			  { enter: enterNote, update: updateNote, exit: exitNote }, 	// Notes screen.
+			  { enter: enterEnd, update: updateEnd, exit: exitEnd },        // End Screen.
+              { enter: enterGO, update: updateGO, exit: exitGO } ]; 		// Gameover state.
 var lastState = -1; // These two variables should be indices for the states array.
 var currState = -1;
 
 // The buttons array stores information about all buttons for my simple UI that just changes states.
 var buttons = [{ img: "img/btn_img/btnStart.png", imgO: "img/btn_img/btnStartO.png", x: 448, y: 512, w: 128, h: 32, over: false, click: onStartClick }, // Start button
-			   { img: "img/btn_img/btnHelp.png", imgO: "img/btn_img/btnHelpO.png", x: 64, y: 704, w: 128, h: 32, over: false, click: onHelpClick }, // Help button
-			   { img: "img/btn_img/btnBack.png", imgO: "img/btn_img/btnBackO.png", x: 448, y: 672, w: 128, h: 32, over: false, click: onExitClick }, ] // Exit button
+			   { img: "img/btn_img/btnHelp.png", imgO: "img/btn_img/btnHelpO.png", x: 64, y: 704, w: 128, h: 32, over: false, click: onHelpClick },		// Help button
+			   { img: "img/btn_img/btnBack.png", imgO: "img/btn_img/btnBackO.png", x: 448, y: 672, w: 128, h: 32, over: false, click: onBackClick },	// Back button
+			   { img: "img/btn_img/btnBack.png", imgO: "img/btn_img/btnBackO.png", x: 448, y: 672, w: 128, h: 32, over: false, click: onBackNoteClick },	// Back(to menu from notes) button
+			   { img: "img/btn_img/btnNotes.png", imgO: "img/btn_img/btnNotes.png", x: 620, y: 672, w: 128, h: 32, over: false, click: onNoteClick },	// Notes button
+			   { img: "img/btn_img/btnMenu.png", imgO: "img/btn_img/btnMenuO.png", x: 260, y: 672, w: 128, h: 32, over: false, click: onMenuClick },	// Menu button
+			   { img: "img/btn_img/btnRetry.png", imgO: "img/btn_img/btnRetryO.png", x: 448, y: 672, w: 128, h: 32, over: false, click: onRetryClick }];	// Retry button
 
 // The activeBtns array is set in each enter function for each state and holds the buttons currently on screen.
 var activeBtns = [];
@@ -116,7 +123,7 @@ function enterGame()
 	_stage.style.backgroundColor = "white";
 	_stage.style.backgroundImage = ""; // Clear any existing background image.
 	document.getElementById("helpMessage0").innerHTML = "Press escape for help";
-	document.getElementById("helpMessage2").innerHTML = "Hold Shift To Alleviate Boredom";
+	//document.getElementById("helpMessage2").innerHTML = "Hold Shift To Alleviate Boredom";
 	activeBtns = []; // Clear the active buttons array.
 
 }
@@ -137,7 +144,7 @@ function enterHelp()
 	console.log("Entering help state.");
 	_stage.style.backgroundColor = "white"; // Setup background colour.
 	_stage.style.backgroundImage = "url('img/ControlsPage.jpg')"; // Setup background image.
-	activeBtns = [ buttons[2] ];
+	activeBtns = [ buttons[2], buttons[5], buttons[4] ];
 }
 
 function updateHelp()
@@ -150,6 +157,62 @@ function updateHelp()
 function exitHelp()
 {
 	console.log("Exiting help state.");
+}
+
+function enterNote()
+{
+	console.log("Entering Notes state.");
+	_stage.style.backgroundColor = "white"; // Setup background colour.
+	_stage.style.backgroundImage = "url('img/NotesPage.jpg')"; // Setup background image.
+	activeBtns = [ buttons[3] ];
+}
+
+function updateNote()
+{
+	console.log("In Notes state.");
+	checkButtons();
+	render();
+}
+
+function exitNote()
+{
+	console.log("Exiting Notes state.");
+}
+
+function enterEnd()
+{
+	console.log("Entering End state.");
+	_stage.style.backgroundColor = "white"; // Setup background colour.
+	activeBtns = [ buttons[6] ];
+}
+
+function updateEnd()
+{
+	console.log("In End state.");
+	checkButtons();
+	render();
+}
+
+function exitEnd()
+{
+	console.log("Exiting End state.");
+}
+
+function enterGO()
+{
+    _stage.style.backgroundImage = "url('img/gameover.png')";
+    activeBtns = [buttons[6]];
+}
+
+function updateGO()
+{
+    checkButtons();
+    render();
+}
+
+function exitGO()
+{
+
 }
 
 // This checkButtons function is basically a box-collision-based test with the mouse location and each active button.
@@ -211,12 +274,37 @@ function onHelpClick()
 	changeState(2);
 }
 
-function onExitClick()
+/*function onExitClick()
 {
     if (currState == 1)
 		changeState(0);
 	else if (currState == 2)
 		changeState(1);
+}*/
+
+function onBackClick()
+{
+	changeState(1);
+}
+
+function onBackNoteClick()
+{
+	changeState(2)
+}
+
+function onNoteClick()
+{
+	changeState(3);
+}
+
+function onMenuClick()
+{
+	location.reload();
+}
+
+function onRetryClick()
+{
+	location.reload();
 }
 
 // This function sets the mouse x and y position as it is on the canvas where 0,0 is top-left of canvas.

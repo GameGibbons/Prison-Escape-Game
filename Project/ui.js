@@ -3,13 +3,16 @@
 //==================================================================
 
 // Constants.
+const TEXT_OFFSET_Y = 19;
 const KEYCARD_WIDTH = 30;
 const KEYCARD_HEIGHT = 36;
-const KEYCARD_OFFSET_X = 10;
+const KEYCARD_TEXT_OFFSET_X = 430;
+const KEYCARD_OFFSET_X = 320;
 const KEYCARD_OFFSET_Y = 27;
 const INVTRY_SLOT_WIDTH = 64;
 const INVTRY_SLOT_HEIGHT = 36;
-const INVTRY_OFFSET_X = 448;
+const INVTRY_TEXT_OFFSET_X = 625;
+const INVTRY_OFFSET_X = 560;
 const INVTRY_OFFSET_Y = 25;
 const ALERT_OFFSET_X = 768;
 const ALERT_OFFSET_Y = 42;
@@ -19,11 +22,8 @@ const ALERT_BAR_GROWTH = 5;
 
 // HUD information.
 var alertLevel = 1;
-//var activeKeycards = [false, false, false, false, false, false, false];
 var inventoryUI = [{item: 0, inUse: false}, 
 				 {item: 0, inUse: false}	];
-
-var itemEnum = ["gun", "knife", "nailboard"]; // The location of the items in the item image.
 
 // HUD images.
 var keycardImg = "img/ui_img/keycard_sheet.png";
@@ -46,7 +46,6 @@ function renderHUD()
 	
 	drawKeycards();
 	drawInventory();
-	drawAlert();
 	drawStorageUI();
 }
 
@@ -87,7 +86,7 @@ function drawKeycards()
 	surface.font = "25px Arial";
 	surface.fillStyle = "black";
 	surface.textAlign = "center";
-	surface.fillText("Keycards", 110, 19);
+	surface.fillText("Keycards", KEYCARD_TEXT_OFFSET_X, TEXT_OFFSET_Y);
 	
 	// Keycards
 	for(var i = 0; i < activeKeycards.length; i++)
@@ -105,7 +104,7 @@ function drawInventory()
 	surface.font = "25px Arial";
 	surface.fillStyle = "black";
 	surface.textAlign = "center";
-	surface.fillText("Inventory", 512, 19);
+	surface.fillText("Inventory", INVTRY_TEXT_OFFSET_X, TEXT_OFFSET_Y);
 	
 	// Inventory slot 1.
 	surface.beginPath();
@@ -117,6 +116,16 @@ function drawInventory()
 	surface.beginPath();
 	surface.strokeRect(INVTRY_OFFSET_X + INVTRY_SLOT_WIDTH + 5, INVTRY_OFFSET_Y, INVTRY_SLOT_WIDTH, INVTRY_SLOT_HEIGHT);
 	
+    // Primary item use text.
+	surface.beginPath();
+	surface.font = "10px Arial";
+	surface.fillStyle = "#ff0000";
+	surface.fillText(player.itemUse[0], INVTRY_OFFSET_X + INVTRY_SLOT_WIDTH - 5, INVTRY_OFFSET_Y + INVTRY_SLOT_HEIGHT - 5);
+
+    // Secondary item use text.
+	surface.beginPath();
+	surface.fillText(player.itemUse[1], (INVTRY_OFFSET_X + INVTRY_SLOT_WIDTH + 5) + INVTRY_SLOT_WIDTH - 5, INVTRY_OFFSET_Y + INVTRY_SLOT_HEIGHT - 5);
+
 	// Inventory images.
 	if(inventoryUI[0].inUse && inventoryUI[0].item.img !== null)
 		surface.drawImage(inventoryUI[0].item.img, inventoryUI[0].item.x, inventoryUI[0].item.y, 32, 32,
@@ -132,14 +141,12 @@ function equipItemP(itemToEquip)
 {
 	inventoryUI[0].item = item[itemToEquip];
 	inventoryUI[0].inUse = true;
-	//Primary (itemToEquip);
 }
 
 function equipItemS(itemToEquip)
 {
 	inventoryUI[1].item = item[itemToEquip];
 	inventoryUI[1].inUse = true;
-	//Secondary (itemToEquip);
 }
 
 // This function takes an inventoryUI slot and resets it.

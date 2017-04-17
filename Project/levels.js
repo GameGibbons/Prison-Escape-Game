@@ -265,7 +265,7 @@ function level1()
 	rooms[20][10] = [1  ,1  ,1  ,1  ,1  ,1  ,1  ,1  ,1  ,1  ,1  ,1  ,1  ,1  ,1  ,1  ];
 	rooms[21] = [];
 	rooms[21][0] =  [1  ,1  ,1  ,1  ,1  ,9  ,4  ,4  ,4  ,4  ,4  ,4  ,4  ,4  ,4  ,8  ];
-	rooms[21][1] =  [1  ,1  ,1  ,1  ,1  ,7  ,{ID:"wp", wpIdx:0, order:4},0  ,0  ,0  ,{ID:"enmy", wpIdx:0, currWP:0}  ,0  ,0  ,0  ,{ID:"wp", wpIdx:0, order:1},5  ];
+	rooms[21][1] =  [1  ,1  ,1  ,1  ,1  ,7  ,{ID:"wp", wpIdx:0, order:4},0  ,0  ,0  ,{ID:"enmy", wpIdx:0, currWP:0, reversePath:true}  ,0  ,0  ,0  ,{ID:"wp", wpIdx:0, order:1},5  ];
 	rooms[21][2] =  [1  ,1  ,1  ,1  ,1  ,7  ,0  ,59 ,59 ,59 ,0  ,59 ,59 ,59 ,0  ,5  ];
 	rooms[21][3] =  [1  ,1  ,1  ,1  ,1  ,7  ,{ID:"wp", wpIdx:0, order:3},0  ,0  ,0  ,0  ,0  ,0  ,0  ,{ID:"wp", wpIdx:0, order:2},5  ];
 	rooms[21][4] =  [1  ,1  ,1  ,1  ,1  ,7  ,0  ,59 ,59 ,59 ,0  ,59 ,59 ,59 ,0  ,5  ];

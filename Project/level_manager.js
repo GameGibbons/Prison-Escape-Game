@@ -169,7 +169,7 @@ door[15] = { img: tileSet[4], dir:3, idle:true, state:2, frameIndexDoor:0, lock:
 door[16] = { img: tileSet[4], dir:0, idle:true, state:2, frameIndexDoor:0, lock:false };
 door[17] = { img: tileSet[4], dir:3, idle:true, state:2, frameIndexDoor:0, lock:false };
 
-var currItemTile; // Used to reference a storage tile that the player is near for item management and UI.
+var currItemTile = null; // Used to reference a storage tile that the player is near for item management and UI.
 
 //Room creation variables
 var currRoom = []; // This is the currently rendered room.
@@ -368,10 +368,17 @@ function buildRoom(roomArr, roomIdx, startLoc)
 
 			            var enemy = {
 			                img: enemyImg, x: tempTile.x, y: tempTile.y, w: ENEMY_WIDTH, h: ENEMY_HEIGHT,
-			                speed: ENEMY_DEFAULT_SPEED, dx: 0, dy: 0, currWP: tempIdx.currWP, range: ENEMY_RANGE, firing: false, fireCtr: 0,
-			                frameCtr: 0, frameIdx: 0, maxFrames: 4, waypoint: tempIdx.wpIdx, dir: 0, spottedPlyr: false, lastSpotted: null,
-                            isStunned: false, isDead: false, isEnemy: true, linecast: null, collider: {x:this.x, y:this.y, w:ENEMY_WIDTH, h:ENEMY_HEIGHT}
+			                speed: ENEMY_DEFAULT_SPEED, dx: 0, dy: 0, currWP: tempIdx.currWP, range: ENEMY_RANGE, firing: true, fireCtr: 0,
+			                fireMax: 13, frameCtr: 0, frameIdx: 0, maxFrames: 4, waypoint: tempIdx.wpIdx, dir: 0, spottedPlyr: false, lastSpotted: null,
+			                lastStunned: null, isStunned: false, isDead: false, isEnemy: true, linecast: null, collider: {
+			                x: this.x, y: this.y, w: ENEMY_WIDTH, h: ENEMY_HEIGHT}
 			            };
+
+			            if (tempIdx.reversePath)
+			            {
+			                enemy.reversePath = true;
+			                enemy.reverse = false;
+			            }
 
 			            activeEnemies.push(enemy);
                         colTiles.push(enemy);
@@ -420,7 +427,7 @@ function buildRoom(roomArr, roomIdx, startLoc)
                         itemTrackIdx++;
                         itemTracking.push(rooms[roomIdx][row][col]);
 
-                        console.log("Tile item use: " + rooms[roomIdx][row][col].use1 + " " + rooms[roomIdx][row][col].use2 + " " + rooms[roomIdx][row][col].use3);
+                        //console.log("Tile item use: " + rooms[roomIdx][row][col].use1 + " " + rooms[roomIdx][row][col].use2 + " " + rooms[roomIdx][row][col].use3);
                         break;
 			        default:
 			            console.log("Rooms tile object is not recognized. Did you assign the correct ID?");
@@ -455,12 +462,14 @@ function updateLevel()
     if (roomScroll == true) {
         doRoomScroll(); // Do a step of the scrolling animation.
         updateEnemies(scrollDir, scrollSpeed); // Update enemy and waypoint positions.
+        bullets = [];
     }
     else { // We're not scrolling so game on...
         handleInput();
         movePlayer();
         updatePlayerBounds();
         moveEnemies();
+        updateBullets();
         animate();
         checkCollision();
         playerAtDoor();
@@ -662,6 +671,7 @@ function renderLevel()
 	    }
 
 	    renderEnemies();
+	    renderBullets();
 	}
 
 	doorRender(doorsToRender);
