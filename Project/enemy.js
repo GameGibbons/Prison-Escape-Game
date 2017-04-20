@@ -171,12 +171,12 @@ function renderEnemies()
                               el.frameIdx * 30, el.dir * 38, ENEMY_WIDTH, ENEMY_HEIGHT,
                               el.x, el.y, ENEMY_WIDTH, ENEMY_HEIGHT);
 			
-            // Draw enemy linecasts. [ Debugging only ]
+            /* Draw enemy linecasts. [ Debugging only ]
             if(el.linecast !== null && el.linecast.length > 0)
             {
                 for (var i = 0; i < el.linecast.length; i++)
                     surface.drawImage(segsImg, el.linecast[i].x, el.linecast[i].y);
-            }
+            }*/
         })
     }
 }
@@ -353,24 +353,8 @@ function checkSight(enemy)
 					tempBullet.dx = dx/mag * tempBullet.speed;
 					tempBullet.dy = dy/mag * tempBullet.speed;
 
-					/*if (enemy.dir === 0)
-					{
-					    tempBullet.img = itemAnim[5];
-					}
-					else if(enemy.dir === 1)
-					{
-					    tempBullet.img = itemAnim[5];
-					}
-					else if (enemy.dir === 2)
-					{
-					    tempBullet.img = itemAnim[4];
-					}
-					else if (enemy.dir === 3)
-					{
-					    tempBullet.img = itemAnim[4];
-					}*/
-
 					bullets.push(tempBullet);
+					playGunfireClip();
 				}
 				else
 				{
@@ -403,28 +387,6 @@ function checkSight(enemy)
 /* Checks each enemy to see if the player is close enough to attack one of them and then applies the attack to that enemy. */
 function attackEnemy(weapon)
 {
-    /*
-    Create attackApplied boolean to determine what boolean to return and set it to false. 
-
-    For each enemy.
-    {
-        If this enemy's plyrNear flag is true.
-        {
-            If the item's effect is stun.
-            {
-                Set this enemy's isStunned flag to true. 
-                Set attackApplied to true.
-            }
-            Else, if the item's effect is kill.
-            {
-                Set this enemy's isDead flag to true.
-                Set attackApplied to true.
-            }
-        }
-    }
-
-    Return attackApplied.
-    */
     var attackApplied = false;
 
 	activeEnemies.forEach(function (el)
@@ -443,6 +405,8 @@ function attackEnemy(weapon)
 				el.isDead = true;
 				attackApplied = true;
 			}
+
+			playMeleeClip();
 		}
 	})
 	

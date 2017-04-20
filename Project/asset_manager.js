@@ -1,7 +1,62 @@
-//-----------------------------------------------------------------------------
-// Asset manager script. Provides functions to load assets in different cases.
-//-----------------------------------------------------------------------------
+//=====================================================================
+// Asset manager script. Provides functions to load and handle assets.
+//=====================================================================
 
+var soundEffects = ["audio/gameover.wav", "audio/gunfire.wav", "audio/melee.wav", "audio/select.wav",
+                    "audio/laundry.mp3", "audio/locker_close.mp3", "audio/locker_open.mp3", "audio/paper.mp3"];
+
+window.addEventListener("load", loadAudioAssets);
+
+function loadAudioAssets()
+{
+    for(var i = 0; i < soundEffects.length; i++)
+    {
+        var tempClip = document.createElement("AUDIO");
+        tempClip.src = soundEffects[i];
+        soundEffects[i] = tempClip;
+    }
+}
+
+function playGameOverClip()
+{
+    soundEffects[0].play();
+}
+
+function playGunfireClip()
+{
+    soundEffects[1].play();
+}
+
+function playMeleeClip()
+{
+    soundEffects[2].play();
+}
+
+function playSelectClip()
+{
+    soundEffects[3].play();
+}
+
+function playLaundryClip()
+{
+    soundEffects[4].play();
+}
+
+function playLockerCloseClip()
+{
+    soundEffects[5].volume = 0.5;
+    soundEffects[5].play();
+}
+
+function playLockerOpenClip()
+{
+    soundEffects[6].play();
+}
+
+function playPaperClip()
+{
+    soundEffects[7].play();
+}
 
 /* Loads a single image. Variable passed must be a image source string. */
 function loadSingleImg(imgToLoad, onLoadFunction)

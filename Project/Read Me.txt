@@ -1,8 +1,14 @@
-Unnamed Beta Ver 0.6.3B
+Duplicity Ver 0.6.8
 
 Change(s):
 + Added new buttons
 + Added use count to the inventory UI
++ Added fully functional main menu
++ Added fully functional pause menu
++ Added help menu
++ Added notes menu
++ Added game over state
++ Added sound effects
 ~ Tweaked inventory & keycard HUD UI element positions
 - Removed alert HUD UI element 
 

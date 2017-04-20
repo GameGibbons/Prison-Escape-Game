@@ -150,11 +150,17 @@ function handleInput()
 	itemTiles.forEach(function(el){
 		if (EPressed == true && el.playerAt == true)
 		{
-			if (ItemWindow == 0)
-				ItemWindow = 1;
-			else if (ItemWindow == 1)
-				ItemWindow = 0;
-		
+		    if (ItemWindow == 0)
+		    {
+		        ItemWindow = 1;
+		        playLockerOpenClip();
+		    }
+		    else if (ItemWindow == 1)
+		    {
+		        ItemWindow = 0;
+		        playLockerCloseClip();
+		    }
+
 			EPressed = false;
 		}
 	})
@@ -190,30 +196,10 @@ function handleInput()
 			player.dir = 3;
 			player.idle = false;
 		}
-		else if (FPressed == true){ // Primary weapon used.
-            /* If an enemy was attacked, decrease primary item use.
-		    if (item[player.inventory[0]].type === "cqc") {
-		        if (attackEnemy(player.inventory[0]) === true) { decreasePrimaryUse(); }
-		    }
-		    else if(item[player.inventory[0]].type === "projectile"){
-		        if(playerFire() === true)
-		            decreasePrimaryUse();
-		    }
-			//console.log("Primary use: " + player.itemUse[0]); */
-
+		else if (FPressed == true){
 			FPressed = false;
 		}
-		else if (GPressed == true){ // Secondary weapon used.
-            /* If an enemy was attacked, decrease secondary item use.
-		    if (item[player.inventory[1]].type === "cqc") {
-		        if (attackEnemy(player.inventory[1]) === true) { decreaseSecondaryUse(); }
-		    }
-		    else if(item[player.inventory[1]].type === "projectile"){
-		        if(playerFire() === true)
-		            decreaseSecondaryUse();
-		    }
-            //console.log("Secondary use: " + player.itemUse[1]); */
-
+		else if (GPressed == true){ 
 			GPressed = false;
 		}
 		else{
@@ -227,6 +213,8 @@ function handleInput()
 			else if (Icursor.slot == 1)
 				Icursor.slot = 2;
 			downPressed = false;
+
+			playSelectClip();
 		}
 		else if (upPressed == true){
 			if (Icursor.slot == 2)
@@ -234,6 +222,8 @@ function handleInput()
 			else if (Icursor.slot == 1)
 				Icursor.slot = 0;
 			upPressed = false;
+
+			playSelectClip();
 		}
 		else if (FPressed == true){
             equipPrimary();
@@ -264,8 +254,11 @@ function handleInput()
 function movePlayer()
 {
     // Change to game over if player is dead.
-    if (player.isDead)
-        changeState(5);
+    if (player.isDead) {
+        playGameOverClip();
+        changeState(6);
+		return;
+	}
 
     if(ItemWindow==0)
     {
@@ -494,6 +487,7 @@ function playerFire()
 		}
 		
 		bullets.push(tempBullet);
+		playGunfireClip();
 
 	return fired;
 }

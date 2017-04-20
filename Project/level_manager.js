@@ -467,6 +467,8 @@ function updateLevel()
     else { // We're not scrolling so game on...
         handleInput();
         movePlayer();
+		if (player.isDead)
+			return;
         updatePlayerBounds();
         moveEnemies();
         updateBullets();
